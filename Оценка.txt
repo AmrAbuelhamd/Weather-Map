@@ -1,0 +1,45 @@
+Weather Map application
+
+1.Создание базового кода проекта                [estimated time = 2 hours] [actual time = ..]
+Создание самого проекта, добавление зависимостей, создание модулей,
+добавление Nav graph с двумя фрагментами/ViewModels, создание все классы домена.
+
+
+2.Инициализация app.di пакет                     [estimated time = 3 hour] [actual time  = ..]
+Изучение Коина и создание базовых моделей.
+
+
+3.Инициализация data.net пакет                   [estimated time = 1 hour] [actual time  = ..]
+Инициализация retrofit и получение необходимые данные из OWM. Добавление Converters.
+
+
+4.Создание первого экрана с картой               [estimated time = 3 hour] [actual time  = ..]
+получение Location permission, получение местоположения пользователя.
+
+
+5.Обработка нажатия пользователем на карту       [estimated time = 3 hour] [actual time  = ..]
+Получение названия города при нажатии на карту, И отображение custom pin на карте,
+создание floating fragment.
+
+6.Создание ViewModel первого экрана              [estimated time = 3 hour] [actual time  = ..]
+Обработка user clicks по floating фрагменту. Обработка ошибок.
+
+
+7.Создание второго экрана                        [estimated time = 1 hour] [actual time  = ..]
+Создание дизайн и функциональную кнопку Поделиться.
+
+
+8.Создание ViewModel второго экрана              [estimated time = 2 hour] [actual time  = ..]
+Сделать запрос к OWM и показать правильные данные пользователю. Обработка ошибок.
+
+
+total 18 hours  {коэффициент запаса 1.5} = 18*1.5 = 27
+расчетное время для задачи - 18 часов, но в очень плохой ситуации с неожиданными
+проблемами этот проект может занять 27 часов.
+
+
+
+
+
+
+nice link {https://stackoverflow.com/questions/22323974/how-to-get-city-name-by-latitude-longitude-in-android}
