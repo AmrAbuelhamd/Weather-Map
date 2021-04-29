@@ -20,22 +20,6 @@ class WeatherMapApp : Application() {
                     listOf(
                             dataSourceModule,
                             useCasesModule
-//
-//                    mangersModule,
-//
-//                    apiModule,
-//                    databaseModule,
-//                    localeRepositoryModule,
-//                    remoteRepositoryModule,
-//                    holderModule,
-//                    mapperModule,
-//
-//                    repositoryModule,
-//                    interactorModule,
-//
-//                    viewModelModule,
-//                    adaptersModule,
-//                    managerModule
                     )
             )
         }
