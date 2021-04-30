@@ -14,3 +14,5 @@
 .externalNativeBuild
 .cxx
 !.idea/codeStyles/
+/data/src/main/java/com/blogspot/soyamr/data/utils/OpenWeatherMap.kt
+/app/src/debug/res/values/google_maps_api.xml
