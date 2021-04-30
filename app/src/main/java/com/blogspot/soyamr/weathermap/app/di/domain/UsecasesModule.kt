@@ -5,5 +5,5 @@ import com.blogspot.soyamr.domain.usecases.GetCityWeatherByNameImpl
 import org.koin.dsl.module
 
 val useCasesModule = module {
-    single { GetCityWeatherByNameImpl(get()) as GetCityWeatherByName }
+    factory { GetCityWeatherByNameImpl(get()) as GetCityWeatherByName }
 }
