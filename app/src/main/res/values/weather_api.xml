@@ -1,0 +1,4 @@
+<resources>
+    <string name="weather_key" templateMergeStrategy="preserve" translatable="false">05e088d732dd897fe987fdb5e17b9521</string>
+    <string name="weather_base_url" templateMergeStrategy="preserve" translatable="false">http://api.openweathermap.org/data/2.5/</string>
+</resources>
