@@ -16,7 +16,7 @@ import java.io.IOException
 
 
 val weatherApiModule = module {
-    single {
+    factory {
         Retrofit.Builder()
             .baseUrl(androidContext().getString(R.string.weather_base_url))
             .client(
