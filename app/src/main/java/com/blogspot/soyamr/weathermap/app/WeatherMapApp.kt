@@ -1,11 +1,15 @@
 package com.blogspot.soyamr.weathermap.app
 
 import android.app.Application
+import com.blogspot.soyamr.weathermap.app.di.data.weatherApiModule
 import com.blogspot.soyamr.weathermap.app.di.domain.dataSourceModule
 import com.blogspot.soyamr.weathermap.app.di.domain.useCasesModule
+import com.blogspot.soyamr.weathermap.app.di.presentation.viewModelModule
+import com.blogspot.soyamr.weathermap.app.di.utils.utilsModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 
 class WeatherMapApp : Application() {
 
@@ -13,13 +17,17 @@ class WeatherMapApp : Application() {
         super.onCreate()
 
         startKoin {
-            androidLogger()
+            androidLogger(Level.ERROR)
             androidContext(this@WeatherMapApp)
 
             modules(
-                    listOf(
-                            dataSourceModule,
-                            useCasesModule
+                listOf(
+                    viewModelModule,
+                    dataSourceModule,
+                    useCasesModule,
+                    utilsModule,
+                    weatherApiModule,
+
                     )
             )
         }

@@ -24,10 +24,24 @@ val weatherApiModule = module {
                     HttpLoggingInterceptor()
                         .setLevel(HttpLoggingInterceptor.Level.BODY)
                 ).addInterceptor { chain ->
-                    val request = chain.request()
+                    var request = chain.request()
                     if (!get<Connectivity>().isOnline()) {
                         throw IOException(androidContext().getString(R.string.no_internet))
                     }
+                    val url = request.url
+                    request = request.newBuilder()
+                        .url(
+                            url.newBuilder()
+                                .addQueryParameter(
+                                    "units",
+                                    "metrics"
+                                ).addQueryParameter(
+                                    "appid",
+                                    androidContext().getString(R.string.weather_key)
+                                )
+                                .build()
+                        )
+                        .build()
                     chain.proceed(request)
                 }.build()
             )

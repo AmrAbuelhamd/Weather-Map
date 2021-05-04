@@ -1,6 +1,8 @@
 plugins {
     id 'java-library'
     id 'kotlin'
+    id 'kotlinx-serialization'
+
 }
 
 java {
@@ -15,6 +17,9 @@ dependencies {
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
+
+    //retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
 
     // Kotlin Serialization
     api "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0"
