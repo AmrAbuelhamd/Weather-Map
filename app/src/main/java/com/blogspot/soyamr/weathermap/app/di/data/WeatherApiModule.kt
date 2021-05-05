@@ -22,7 +22,7 @@ const val LOGGER_INTERCEPTOR = "logger_interceptor"
 
 val weatherApiModule = module {
     factory<Interceptor>(named(INTERNET_EXCEPTION_HANDLER_INTERCEPTOR)) {
-        InternetExceptionInterceptor(get(), androidContext().getString(R.string.no_internet))
+        InternetExceptionInterceptor(get())
     }
     factory<Interceptor>(named(FIXED_QUERY_INTERCEPTOR)) {
         FixedQueryInterceptor(androidContext().getString(R.string.weather_key))

@@ -7,10 +7,10 @@ import com.blogspot.soyamr.domain.models.Weather
 fun CityWeatherResponse.toDomain() =
     Weather(
         name ?: "city name placeholder",
-        main?.humidity ?: 999,
-        main?.temp?.toInt()?:999,
-        main?.pressure?.toDouble() ?: 999.toDouble(),
-        wind?.speed ?: 999.toDouble(),
+        main?.humidity ?: 0,
+        main?.temp?.toInt()?:0,
+        main?.pressure?.toDouble() ?: 0.toDouble(),
+        wind?.speed ?: 0.toDouble(),
         Direction.getDirection(wind?.deg?:0),
         weather?.get(0)?.description ?:"description placeholder",
         weather?.get(0)?.icon ?:"icon placeholder",
