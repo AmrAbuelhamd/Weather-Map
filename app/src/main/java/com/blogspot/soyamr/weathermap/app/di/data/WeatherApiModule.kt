@@ -2,8 +2,9 @@ package com.blogspot.soyamr.weathermap.app.di.data
 
 
 import com.blogspot.soyamr.data.net.WeatherApi
+import com.blogspot.soyamr.data.net.interceptors.FixedQueryInterceptor
+import com.blogspot.soyamr.data.net.interceptors.InternetExceptionInterceptor
 import com.blogspot.soyamr.weathermap.R
-import com.blogspot.soyamr.weathermap.app.utils.Connectivity
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -14,45 +15,20 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import java.io.IOException
 
 const val INTERNET_EXCEPTION_HANDLER_INTERCEPTOR = "internet_exception_handler_interceptor"
 const val FIXED_QUERY_INTERCEPTOR = "fixed_query_interceptor"
 const val LOGGER_INTERCEPTOR = "logger_interceptor"
 
 val weatherApiModule = module {
-    single(named(INTERNET_EXCEPTION_HANDLER_INTERCEPTOR)) {
-        Interceptor { chain: Interceptor.Chain ->
-            val request = chain.request()
-            if (!get<Connectivity>().isOnline()) {
-                throw IOException(androidContext().getString(R.string.no_internet))
-            }
-            chain.proceed(request)
-        }
+    factory<Interceptor>(named(INTERNET_EXCEPTION_HANDLER_INTERCEPTOR)) {
+        InternetExceptionInterceptor(get(), androidContext().getString(R.string.no_internet))
     }
-    single(named(FIXED_QUERY_INTERCEPTOR)) {
-        Interceptor { chain: Interceptor.Chain ->
-            var request = chain.request()
-            val url = request.url
-            request = request.newBuilder()
-                .url(
-                    url.newBuilder()
-                        .addQueryParameter(
-                            "units",
-                            "metrics"
-                        ).addQueryParameter(
-                            "appid",
-                            androidContext().getString(R.string.weather_key)
-                        )
-                        .build()
-                )
-                .build()
-            chain.proceed(request)
-        }
+    factory<Interceptor>(named(FIXED_QUERY_INTERCEPTOR)) {
+        FixedQueryInterceptor(androidContext().getString(R.string.weather_key))
     }
-    single(named(LOGGER_INTERCEPTOR)) {
-        HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
+    factory(named(LOGGER_INTERCEPTOR)) {
+        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
     single {

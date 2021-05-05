@@ -4,13 +4,14 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import com.blogspot.soyamr.domain.utils.Connectivity
 
 
-class Connectivity constructor(
+class ConnectivityImpl constructor(
     private val context: Context,
-) {
+) : Connectivity {
 
-    fun isOnline(): Boolean {
+    override fun isOnline(): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

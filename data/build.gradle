@@ -20,6 +20,8 @@ dependencies {
 
     //retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    //retrofit logging
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2'
 
     // Kotlin Serialization
     api "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0"
