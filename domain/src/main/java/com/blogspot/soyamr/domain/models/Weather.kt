@@ -9,5 +9,6 @@ data class Weather(
     val pressure: Double,
     val windSpeed: Double,
     val direction: Direction,
-    val generalDescription: String
+    val generalDescription: String,
+    val iconCode:String
 )

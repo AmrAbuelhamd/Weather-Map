@@ -14,3 +14,6 @@
 .externalNativeBuild
 .cxx
 !.idea/codeStyles/
+/app/src/debug/res/values/google_maps_api.xml
+/app/src/main/res/values/google_maps_api.xml
+/app/src/main/res/values/weather_api.xml

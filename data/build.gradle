@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'kotlin'
+    id 'kotlinx-serialization'
 }
 
 java {
@@ -11,12 +12,16 @@ java {
 dependencies {
     implementation project(':domain')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
     // Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
-    // Retrofit
+    //retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    //retrofit logging
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2'
+
+    // Kotlin Serialization
+    api "org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0"
+    api "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.0"
 }

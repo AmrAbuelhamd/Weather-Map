@@ -5,5 +5,5 @@ import com.blogspot.soyamr.domain.WeatherDataSource
 import org.koin.dsl.module
 
 val dataSourceModule = module {
-    factory { WeatherDataSourceImpl() as WeatherDataSource }
+    factory { WeatherDataSourceImpl(get()) as WeatherDataSource }
 }
