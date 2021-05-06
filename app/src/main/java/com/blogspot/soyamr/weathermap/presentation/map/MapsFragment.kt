@@ -42,7 +42,7 @@ class MapsFragment : Fragment() {
         {
             binding.progressCircular.isVisible = false
             val userLocation = LatLng(it.latitude, it.longitude)
-            googleMap.addMarker(MarkerOptions().position(userLocation).title("you are Here "))
+            googleMap.addMarker(MarkerOptions().position(userLocation))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation))
             googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F));
         }
