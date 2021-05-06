@@ -9,7 +9,7 @@ Weather Map application
 Изучение Коина и создание базовых моделей.
 
 
-3.Инициализация data.net пакет                   [estimated time = 1 hour] [actual time  = ..]
+3.Инициализация data.net пакет                   [estimated time = 1 hour] [actual time  = 02:40 + 02:15 на испровление ] = 04:55
 Инициализация retrofit и получение необходимые данные из OWM. Добавление Converters.
 
 
