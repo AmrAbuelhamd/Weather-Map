@@ -40,14 +40,6 @@ class MapsFragment : Fragment(), IMapFragmentListener {
         )
     }
 
-    override fun setNewLocation(userLocation: Location) {
-        binding.progressCircular.isVisible = false
-        val userLocationLatLng = LatLng(userLocation.latitude, userLocation.longitude)
-        googleMap.addMarker(MarkerOptions().position(userLocationLatLng))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocationLatLng))
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F))
-    }
-
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -56,19 +48,6 @@ class MapsFragment : Fragment(), IMapFragmentListener {
                 showMessage(R.string.can_not_find_location, false)
             }
         }
-
-    override fun hasPermission() =
-        ActivityCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-    override fun changeUserSettings(exception: ResolvableApiException) {
-        val intentSenderRequest =
-            IntentSenderRequest.Builder(exception.resolution).build()
-        resolutionForResult.launch(intentSenderRequest)
-    }
-
 
     private val callback = OnMapReadyCallback { googleMap ->
         this.googleMap = googleMap
@@ -88,10 +67,24 @@ class MapsFragment : Fragment(), IMapFragmentListener {
             }
         }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+    override fun setNewLocation(userLocation: Location) {
+        binding.progressCircular.isVisible = false
+        val userLocationLatLng = LatLng(userLocation.latitude, userLocation.longitude)
+        googleMap.addMarker(MarkerOptions().position(userLocationLatLng))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocationLatLng))
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F))
+    }
+
+    override fun hasPermission() =
+        ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+    override fun changeUserSettings(exception: ResolvableApiException) {
+        val intentSenderRequest =
+            IntentSenderRequest.Builder(exception.resolution).build()
+        resolutionForResult.launch(intentSenderRequest)
     }
 
     override fun showMessage(msgId: Int, progressBarVisible: Boolean) {
@@ -99,9 +92,10 @@ class MapsFragment : Fragment(), IMapFragmentListener {
         Toast.makeText(requireContext(), getString(msgId), Toast.LENGTH_SHORT).show()
     }
 
-    override fun onPause() {
-        super.onPause()
-        locationManger.stopLocationUpdates()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(callback)
     }
 
     override fun onCreateView(
@@ -113,5 +107,10 @@ class MapsFragment : Fragment(), IMapFragmentListener {
             binding = this
             root
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        locationManger.stopLocationUpdates()
     }
 }

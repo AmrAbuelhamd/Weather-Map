@@ -56,7 +56,6 @@ class LocationManger(
         }
     }
 
-
     private fun requestLocationUpdates() {
         val builder = LocationSettingsRequest.Builder()
             .addLocationRequest(locationRequest)
