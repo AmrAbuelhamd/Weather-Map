@@ -1,14 +1,8 @@
-package com.blogspot.soyamr.weathermap.presentation.map
+package com.blogspot.soyamr.weathermap.presentation.map.helpers
 
-import android.Manifest
 import android.content.Context
 import android.content.IntentSender
-import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Looper
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
-import androidx.core.app.ActivityCompat
 import com.blogspot.soyamr.weathermap.R
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -16,10 +10,7 @@ import com.google.android.gms.tasks.Task
 
 class LocationManger(
     private val context: Context,
-    private val addMarker: (userLocation: Location) -> Unit,
-    private val resolutionForResult: ActivityResultLauncher<IntentSenderRequest>,
-    private val requestPermissionLauncher: ActivityResultLauncher<String>,
-    private val showMessage: (msgId: Int, progressBarVisible: Boolean) -> Unit
+    private val mapFragmentListener: IMapFragmentListener
 ) {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -38,35 +29,30 @@ class LocationManger(
                 var showErrorMessage = true
                 for (location in locationResult.locations) {
                     if (location != null) {
-                        addMarker(location)
+                        mapFragmentListener.setNewLocation(location)
                         fusedLocationClient.removeLocationUpdates(this)
                         showErrorMessage = false
                         break
                     }
                 }
                 if (showErrorMessage)
-                    showMessage(R.string.can_not_find_location, false)
+                    mapFragmentListener.showMessage(R.string.can_not_find_location)
             }
         }
     }
 
-    fun setMarkerOnMap() {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-            return
-        }
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.lastLocation.addOnSuccessListener {
-            if (it != null) {
-                addMarker(it)
-            } else {
-                requestLocationUpdates()
+    fun getUserLocation() {
+        try {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+            fusedLocationClient.lastLocation.addOnSuccessListener {
+                if (it != null) {
+                    mapFragmentListener.setNewLocation(it)
+                } else {
+                    requestLocationUpdates()
+                }
             }
+        } catch (e: SecurityException) {
+            mapFragmentListener.showMessage(R.string.something_went_wrong)
         }
     }
 
@@ -84,32 +70,29 @@ class LocationManger(
         task.addOnFailureListener { exception ->
             if (exception is ResolvableApiException) {
                 try {
-                    val intentSenderRequest =
-                        IntentSenderRequest.Builder(exception.resolution).build()
-                    resolutionForResult.launch(intentSenderRequest)
-
+                    mapFragmentListener.changeUserSettings(exception)
                 } catch (sendEx: IntentSender.SendIntentException) {
-                    showMessage(R.string.can_not_find_location, false)
+                    mapFragmentListener.showMessage(R.string.can_not_find_location)
                 }
             }
         }
     }
 
     fun startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            showMessage(R.string.can_not_find_location, false)
+        if (!mapFragmentListener.hasPermission()) {
+            mapFragmentListener.showMessage(R.string.can_not_find_location)
             return
         }
-        showMessage(R.string.getting_your_location, true)
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
+        mapFragmentListener.showMessage(R.string.getting_your_location, true)
+        try {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+        } catch (e: SecurityException) {
+            mapFragmentListener.showMessage(R.string.something_went_wrong)
+        }
     }
 
     fun stopLocationUpdates() {

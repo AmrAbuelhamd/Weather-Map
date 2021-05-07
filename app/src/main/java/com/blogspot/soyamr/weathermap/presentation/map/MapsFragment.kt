@@ -1,6 +1,8 @@
 package com.blogspot.soyamr.weathermap.presentation.map
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,10 +12,14 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.databinding.FragmentMapsBinding
+import com.blogspot.soyamr.weathermap.presentation.map.helpers.IMapFragmentListener
+import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationManger
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,7 +27,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapsFragment : Fragment() {
+class MapsFragment : Fragment(), IMapFragmentListener {
 
     private lateinit var binding: FragmentMapsBinding
 
@@ -30,35 +36,47 @@ class MapsFragment : Fragment() {
     private val locationManger: LocationManger by lazy {
         LocationManger(
             requireContext(),
-            addMarker,
-            resolutionForResult,
-            requestPermissionLauncher,
-            showMessage
+            this@MapsFragment
         )
     }
 
-    //callbacks
-    private val addMarker: (userLocation: Location) -> Unit =
-        {
-            binding.progressCircular.isVisible = false
-            val userLocation = LatLng(it.latitude, it.longitude)
-            googleMap.addMarker(MarkerOptions().position(userLocation))
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation))
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F))
-        }
+    override fun setNewLocation(userLocation: Location) {
+        binding.progressCircular.isVisible = false
+        val userLocationLatLng = LatLng(userLocation.latitude, userLocation.longitude)
+        googleMap.addMarker(MarkerOptions().position(userLocationLatLng))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocationLatLng))
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F))
+    }
 
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                locationManger.setMarkerOnMap()
+                locationManger.getUserLocation()
             } else {
                 showMessage(R.string.can_not_find_location, false)
             }
         }
 
+    override fun hasPermission() =
+        ActivityCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+    override fun changeUserSettings(exception: ResolvableApiException) {
+        val intentSenderRequest =
+            IntentSenderRequest.Builder(exception.resolution).build()
+        resolutionForResult.launch(intentSenderRequest)
+    }
+
+
     private val callback = OnMapReadyCallback { googleMap ->
         this.googleMap = googleMap
-        locationManger.setMarkerOnMap()
+        if (hasPermission()) {
+            locationManger.getUserLocation()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
     }
 
     private val resolutionForResult: ActivityResultLauncher<IntentSenderRequest> =
@@ -76,11 +94,10 @@ class MapsFragment : Fragment() {
         mapFragment?.getMapAsync(callback)
     }
 
-    val showMessage: (msgId: Int, progressBarVisible: Boolean) -> Unit =
-        { mgsId, isVisible ->
-            binding.progressCircular.isVisible = isVisible
-            Toast.makeText(requireContext(), getString(mgsId), Toast.LENGTH_SHORT).show()
-        }
+    override fun showMessage(msgId: Int, progressBarVisible: Boolean) {
+        binding.progressCircular.isVisible = progressBarVisible
+        Toast.makeText(requireContext(), getString(msgId), Toast.LENGTH_SHORT).show()
+    }
 
     override fun onPause() {
         super.onPause()
