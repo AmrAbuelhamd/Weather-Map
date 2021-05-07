@@ -45,7 +45,7 @@ class LocationManger(
                         break
                     }
                 }
-                if (flag)
+                if (!flag)
                     showMessage(R.string.can_not_find_location, false)
             }
         }
