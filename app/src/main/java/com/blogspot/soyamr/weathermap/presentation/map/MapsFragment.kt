@@ -17,7 +17,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.databinding.FragmentMapsBinding
-import com.blogspot.soyamr.weathermap.presentation.map.helpers.IMapFragmentListener
+import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationListener
 import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationManger
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -27,16 +27,47 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapsFragment : Fragment(), IMapFragmentListener {
+class MapsFragment : Fragment() {
 
     private lateinit var binding: FragmentMapsBinding
 
     private lateinit var googleMap: GoogleMap
 
+    private val locationManagerListener = object : LocationListener {
+        override fun onLocationUpdated(userLocation: Location) {
+            binding.progressCircular.isVisible = false
+            val userLocationLatLng = LatLng(userLocation.latitude, userLocation.longitude)
+            googleMap.addMarker(MarkerOptions().position(userLocationLatLng))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocationLatLng))
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F))
+        }
+
+        override fun hasLocationPermission() =
+            ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+        override fun askUserToOpenGPS(exception: ResolvableApiException) {
+            val intentSenderRequest =
+                IntentSenderRequest.Builder(exception.resolution).build()
+            resolutionForResult.launch(intentSenderRequest)
+        }
+
+        override fun onSomethingWentWrong() {
+            showMessage(R.string.can_not_find_location, false)
+
+        }
+
+        override fun onGettingLocation() {
+            showMessage(R.string.getting_your_location, true)
+        }
+    }
+
     private val locationManger: LocationManger by lazy {
         LocationManger(
             requireContext(),
-            this@MapsFragment
+            locationManagerListener
         )
     }
 
@@ -45,13 +76,13 @@ class MapsFragment : Fragment(), IMapFragmentListener {
             if (isGranted) {
                 locationManger.getUserLocation()
             } else {
-                showMessage(R.string.can_not_find_location, false)
+                locationManagerListener.onSomethingWentWrong()
             }
         }
 
     private val callback = OnMapReadyCallback { googleMap ->
         this.googleMap = googleMap
-        if (hasPermission()) {
+        if (locationManagerListener.hasLocationPermission()) {
             locationManger.getUserLocation()
         } else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -63,33 +94,16 @@ class MapsFragment : Fragment(), IMapFragmentListener {
             if (activityResult.resultCode == RESULT_OK) {
                 locationManger.startLocationUpdates()
             } else {
-                showMessage(R.string.can_not_find_location, false)
+                locationManagerListener.onSomethingWentWrong()
             }
         }
 
-    override fun setNewLocation(userLocation: Location) {
-        binding.progressCircular.isVisible = false
-        val userLocationLatLng = LatLng(userLocation.latitude, userLocation.longitude)
-        googleMap.addMarker(MarkerOptions().position(userLocationLatLng))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocationLatLng))
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F))
-    }
 
-    override fun hasPermission() =
-        ActivityCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-    override fun changeUserSettings(exception: ResolvableApiException) {
-        val intentSenderRequest =
-            IntentSenderRequest.Builder(exception.resolution).build()
-        resolutionForResult.launch(intentSenderRequest)
-    }
-
-    override fun showMessage(msgId: Int, progressBarVisible: Boolean) {
-        binding.progressCircular.isVisible = progressBarVisible
-        Toast.makeText(requireContext(), getString(msgId), Toast.LENGTH_SHORT).show()
+    private fun showMessage(msgId: Int, showProgressBar: Boolean) {
+        binding.progressCircular.isVisible = showProgressBar
+        Toast.makeText(
+            requireContext(), getString(msgId), Toast.LENGTH_SHORT
+        ).show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

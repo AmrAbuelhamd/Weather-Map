@@ -3,14 +3,13 @@ package com.blogspot.soyamr.weathermap.presentation.map.helpers
 import android.content.Context
 import android.content.IntentSender
 import android.os.Looper
-import com.blogspot.soyamr.weathermap.R
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 
 class LocationManger(
     private val context: Context,
-    private val mapFragmentListener: IMapFragmentListener
+    private val locationListener: LocationListener
 ) {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -29,14 +28,14 @@ class LocationManger(
                 var showErrorMessage = true
                 for (location in locationResult.locations) {
                     if (location != null) {
-                        mapFragmentListener.setNewLocation(location)
+                        locationListener.onLocationUpdated(location)
                         fusedLocationClient.removeLocationUpdates(this)
                         showErrorMessage = false
                         break
                     }
                 }
                 if (showErrorMessage)
-                    mapFragmentListener.showMessage(R.string.can_not_find_location)
+                    locationListener.onSomethingWentWrong()
             }
         }
     }
@@ -46,13 +45,13 @@ class LocationManger(
             fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
             fusedLocationClient.lastLocation.addOnSuccessListener {
                 if (it != null) {
-                    mapFragmentListener.setNewLocation(it)
+                    locationListener.onLocationUpdated(it)
                 } else {
                     requestLocationUpdates()
                 }
             }
         } catch (e: SecurityException) {
-            mapFragmentListener.showMessage(R.string.something_went_wrong)
+            locationListener.onSomethingWentWrong()
         }
     }
 
@@ -69,20 +68,20 @@ class LocationManger(
         task.addOnFailureListener { exception ->
             if (exception is ResolvableApiException) {
                 try {
-                    mapFragmentListener.changeUserSettings(exception)
+                    locationListener.askUserToOpenGPS(exception)
                 } catch (sendEx: IntentSender.SendIntentException) {
-                    mapFragmentListener.showMessage(R.string.can_not_find_location)
+                    locationListener.onSomethingWentWrong()
                 }
             }
         }
     }
 
     fun startLocationUpdates() {
-        if (!mapFragmentListener.hasPermission()) {
-            mapFragmentListener.showMessage(R.string.can_not_find_location)
+        if (!locationListener.hasLocationPermission()) {
+            locationListener.onSomethingWentWrong()
             return
         }
-        mapFragmentListener.showMessage(R.string.getting_your_location, true)
+        locationListener.onGettingLocation()
         try {
             fusedLocationClient.requestLocationUpdates(
                 locationRequest,
@@ -90,7 +89,7 @@ class LocationManger(
                 Looper.getMainLooper()
             )
         } catch (e: SecurityException) {
-            mapFragmentListener.showMessage(R.string.something_went_wrong)
+            locationListener.onSomethingWentWrong()
         }
     }
 
