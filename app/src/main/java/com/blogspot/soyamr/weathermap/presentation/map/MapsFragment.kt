@@ -44,7 +44,7 @@ class MapsFragment : Fragment() {
             val userLocation = LatLng(it.latitude, it.longitude)
             googleMap.addMarker(MarkerOptions().position(userLocation))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation))
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F));
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F))
         }
 
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
@@ -52,7 +52,7 @@ class MapsFragment : Fragment() {
             if (isGranted) {
                 locationManger.setMarkerOnMap()
             } else {
-                showMessage(R.string.can_not_find_location,false)
+                showMessage(R.string.can_not_find_location, false)
             }
         }
 
@@ -66,7 +66,7 @@ class MapsFragment : Fragment() {
             if (activityResult.resultCode == RESULT_OK) {
                 locationManger.startLocationUpdates()
             } else {
-                showMessage(R.string.can_not_find_location,false)
+                showMessage(R.string.can_not_find_location, false)
             }
         }
 

@@ -23,7 +23,6 @@ class LocationManger(
 ) {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-
     private val locationRequest: LocationRequest by lazy {
         LocationRequest.create().apply {
             interval = 10000
@@ -36,16 +35,16 @@ class LocationManger(
         object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
-                var flag = false
+                var showErrorMessage = true
                 for (location in locationResult.locations) {
                     if (location != null) {
                         addMarker(location)
                         fusedLocationClient.removeLocationUpdates(this)
-                        flag = true
+                        showErrorMessage = false
                         break
                     }
                 }
-                if (!flag)
+                if (showErrorMessage)
                     showMessage(R.string.can_not_find_location, false)
             }
         }
