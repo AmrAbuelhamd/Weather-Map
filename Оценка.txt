@@ -13,7 +13,7 @@ Weather Map application
 Инициализация retrofit и получение необходимые данные из OWM. Добавление Converters.
 
 
-4.Создание первого экрана с картой               [estimated time = 3 hour] [actual time  = 03:20 + ..................]
+4.Создание первого экрана с картой               [estimated time = 3 hour] [actual time  = 03:20 + 01:05 на испровление ] = 04:25
 получение Location permission, получение местоположения пользователя.
 
 
