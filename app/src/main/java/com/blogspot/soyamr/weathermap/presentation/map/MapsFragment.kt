@@ -3,13 +3,10 @@ package com.blogspot.soyamr.weathermap.presentation.map
 import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +15,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -26,14 +22,13 @@ import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.databinding.FragmentMapsBinding
 import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationListener
 import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationManger
+import com.blogspot.soyamr.weathermap.presentation.utils.bitMapFromVector
 import com.blogspot.soyamr.weathermap.presentation.utils.getLocationAsDMS
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
@@ -104,41 +99,46 @@ class MapsFragment : Fragment() {
     }
 
     private fun onUserClickOnMap(latLng: LatLng) {
+        binding.floatingCityInfoContainer.isGone = true
         googleMap.clear()
         googleMap.addMarker(
             MarkerOptions().position(latLng)
-                .icon(bitMapFromVector(R.drawable.ic_pin))
+                .icon(bitMapFromVector(R.drawable.ic_pin, requireContext()))
         )
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
         showCityNameIfExists(latLng)
     }
 
     private fun showCityNameIfExists(latLng: LatLng) {
+        if(Geocoder.isPresent()) {
+            try {
+                val geocoder = Geocoder(requireContext())
+                val addresses: List<Address> =
+                    geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
 
-        try {
-            val geocoder = Geocoder(requireContext())
-            val addresses: List<Address> =
-                geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+                if (addresses.isEmpty())
+                    return//show nothing
 
-            if (addresses.isEmpty())
-                return//show nothing
+                val cityName: String = addresses[0].locality
 
-            val cityName: String = addresses[0].locality
+                binding.floatingCityInfoContainer.isVisible = true
+                binding.cityNameTextView.text = cityName
+                binding.locationTextView.text = getLocationAsDMS(Location("").also {
+                    it.longitude = latLng.longitude
+                    it.latitude = latLng.latitude
+                }, 1)
+                binding.closeButton.setOnClickListener {
+                    binding.floatingCityInfoContainer.isGone = true
+                }
+                binding.openCityWeatherFragmentButton.setOnClickListener { }
 
-            binding.floatingCityNameContainer.isVisible = true
-            binding.cityNameTextView.text = cityName
-            binding.locationTextView.text = getLocationAsDMS(Location("").also {
-                it.longitude = latLng.longitude
-                it.latitude = latLng.latitude
-            }, 1)
-            binding.closeButton.setOnClickListener {
-                binding.floatingCityNameContainer.isGone = true
+
+            } catch (e: Exception) {
+                //show nothing
+                e.printStackTrace()
             }
-            //button
-            Log.e("Hee", "cityName:$cityName")
-
-        } catch (e: Exception) {
-            //show nothing
+        }else{
+            showMessage(R.string.googleServiceNotFound,false)
         }
     }
 
@@ -182,21 +182,4 @@ class MapsFragment : Fragment() {
         locationManger.stopLocationUpdates()
     }
 
-    private fun bitMapFromVector(vectorResID: Int): BitmapDescriptor {
-        val vectorDrawable = ContextCompat.getDrawable(requireContext(), vectorResID)
-        vectorDrawable!!.setBounds(
-            0,
-            0,
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight
-        )
-        val bitmap = Bitmap.createBitmap(
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(bitmap)
-        vectorDrawable.draw(canvas)
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
-    }
 }

@@ -1,6 +1,12 @@
 package com.blogspot.soyamr.weathermap.presentation.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.location.Location
+import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 
 fun getLocationAsDMS(location: Location, decimalPlace: Int): String {
     var strLatitude = Location.convert(location.latitude, Location.FORMAT_SECONDS)
@@ -14,15 +20,34 @@ fun getLocationAsDMS(location: Location, decimalPlace: Int): String {
     return "$strLatitude $strLongitude"
 }
 
-private fun replaceDelimiters(str: String, decimalPlace: Int): String {
-    var result = str
-    result = result.replaceFirst(":".toRegex(), "°")
-    result = result.replaceFirst(":".toRegex(), "'")
-    val pointIndex = result.indexOf(".")
+
+fun bitMapFromVector(vectorResID: Int, context: Context): BitmapDescriptor {
+    val vectorDrawable = ContextCompat.getDrawable(context, vectorResID)
+    vectorDrawable!!.setBounds(
+        0,
+        0,
+        vectorDrawable.intrinsicWidth,
+        vectorDrawable.intrinsicHeight
+    )
+    val bitmap = Bitmap.createBitmap(
+        vectorDrawable.intrinsicWidth,
+        vectorDrawable.intrinsicHeight,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+    vectorDrawable.draw(canvas)
+    return BitmapDescriptorFactory.fromBitmap(bitmap)
+}
+
+private fun replaceDelimiters(coordinateString: String, decimalPlace: Int): String {
+    var formattedCoordinates = coordinateString
+    formattedCoordinates = formattedCoordinates.replaceFirst(":".toRegex(), "°")
+    formattedCoordinates = formattedCoordinates.replaceFirst(":".toRegex(), "'")
+    val pointIndex = formattedCoordinates.indexOf(".")
     val endIndex = pointIndex + 1 + decimalPlace
-    if (endIndex < result.length) {
-        result = result.substring(0, endIndex)
+    if (endIndex < formattedCoordinates.length) {
+        formattedCoordinates = formattedCoordinates.substring(0, endIndex)
     }
-    result += "\""
-    return result
+    formattedCoordinates += "\""
+    return formattedCoordinates
 }
