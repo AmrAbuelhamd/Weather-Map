@@ -26,6 +26,7 @@ import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.databinding.FragmentMapsBinding
 import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationListener
 import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationManger
+import com.blogspot.soyamr.weathermap.presentation.utils.getLocationAsDMS
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -35,8 +36,6 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import org.koin.android.ext.android.bind
-import java.util.*
 
 
 class MapsFragment : Fragment() {
@@ -128,14 +127,21 @@ class MapsFragment : Fragment() {
 
             binding.floatingCityNameContainer.isVisible = true
             binding.cityNameTextView.text = cityName
-            binding.closeButton.setOnClickListener { binding.floatingCityNameContainer.isGone = true}
+            binding.locationTextView.text = getLocationAsDMS(Location("").also {
+                it.longitude = latLng.longitude
+                it.latitude = latLng.latitude
+            }, 1)
+            binding.closeButton.setOnClickListener {
+                binding.floatingCityNameContainer.isGone = true
+            }
             //button
-            Log.e("Hee","cityName:$cityName")
+            Log.e("Hee", "cityName:$cityName")
 
         } catch (e: Exception) {
             //show nothing
         }
     }
+
 
     private val resolutionForResult: ActivityResultLauncher<IntentSenderRequest> =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
