@@ -8,4 +8,6 @@
     <string name="something_went_wrong">something went wrong</string>
     <string name="show_weather">Show Weather</string>
     <string name="googleServiceNotFound">can\'t find city name, google service is needed.</string>
+    <string name="no_city_found">no city found in this location</string>
+    <string name="choose_city">choose city</string>
 </resources>

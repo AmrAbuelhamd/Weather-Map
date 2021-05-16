@@ -17,7 +17,7 @@ Weather Map application
 получение Location permission, получение местоположения пользователя.
 
 
-5.Обработка нажатия пользователем на карту       [estimated time = 3 hour] [actual time  = ..]
+5.Обработка нажатия пользователем на карту       [estimated time = 3 hour] [actual time  = 02:45 + 00:00 на испровление ]
 Получение названия города при нажатии на карту, И отображение custom pin на карте,
 создание floating fragment.
 
