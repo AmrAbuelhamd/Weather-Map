@@ -16,24 +16,20 @@ import kotlinx.coroutines.withContext
 
 class MapsViewModel(private val geocoder: Geocoder) : ViewModel() {
 
-    val cityInfoContainerVisibility: MutableLiveData<Boolean> =
-        MutableLiveData(false)
-    val progressBarVisibility: MutableLiveData<Boolean> =
-        MutableLiveData(false)
-    val cityName: MutableLiveData<String> =
-        MutableLiveData("")
-    val locationFormattedString: MutableLiveData<String> =
-        MutableLiveData("")
+    val cityInfoContainerVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
+    val progressBarVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
+    val cityName: MutableLiveData<String> = MutableLiveData("")
+    val locationFormattedString: MutableLiveData<String> = MutableLiveData("")
 
     private val _errorMessage: MutableLiveData<Int> = MutableLiveData(0)
     val errorMessage: LiveData<Int> = _errorMessage
 
-    val showWeatherData: SingleLiveEvent<String> = SingleLiveEvent()
+    val showWeatherDetails: SingleLiveEvent<String> = SingleLiveEvent()
 
     fun showCityNameIfExists(latLng: LatLng) {
-        cityInfoContainerVisibility.value = false
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main) {
+                cityInfoContainerVisibility.value = false
                 if (Geocoder.isPresent()) {
                     try {
                         val addresses: List<Address> = withContext(Dispatchers.IO) {
@@ -43,10 +39,9 @@ class MapsViewModel(private val geocoder: Geocoder) : ViewModel() {
                             _errorMessage.value = R.string.no_city_found
                             return@withContext
                         }
-                        val cityName: String = addresses[0].locality
                         cityInfoContainerVisibility.value = true
-                        this@MapsViewModel.cityName.value = cityName
-                        this@MapsViewModel.locationFormattedString.value =
+                        cityName.value = addresses[0].locality
+                        locationFormattedString.value =
                             getLocationAsDMS(Location("").also {
                                 it.longitude = latLng.longitude
                                 it.latitude = latLng.latitude
@@ -93,7 +88,7 @@ class MapsViewModel(private val geocoder: Geocoder) : ViewModel() {
 
     fun showMoreData() {
         if (!cityName.value.isNullOrBlank())
-            showWeatherData.value = cityName.value
+            showWeatherDetails.value = cityName.value
         else
             _errorMessage.value = R.string.choose_city
     }

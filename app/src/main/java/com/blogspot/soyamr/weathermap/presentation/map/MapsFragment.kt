@@ -14,7 +14,6 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.add
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.blogspot.soyamr.weathermap.R
@@ -139,7 +138,7 @@ class MapsFragment : Fragment() {
 
     private fun setUpViewModelListeners() {
         viewModel.errorMessage.observe(viewLifecycleOwner, ::showError)
-        viewModel.showWeatherData.observe(viewLifecycleOwner, ::openCityWeatherFragment)
+        viewModel.showWeatherDetails.observe(viewLifecycleOwner, ::openCityWeatherFragment)
     }
 
     private fun openCityWeatherFragment(cityName: String?) {
@@ -175,5 +174,4 @@ class MapsFragment : Fragment() {
         super.onPause()
         locationManger.stopLocationUpdates()
     }
-
 }
