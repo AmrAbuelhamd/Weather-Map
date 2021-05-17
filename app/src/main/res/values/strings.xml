@@ -10,4 +10,5 @@
     <string name="googleServiceNotFound">can\'t find city name, google service is needed.</string>
     <string name="no_city_found">no city found in this location</string>
     <string name="choose_city">choose city</string>
+    <string name="search_places">Search Places</string>
 </resources>

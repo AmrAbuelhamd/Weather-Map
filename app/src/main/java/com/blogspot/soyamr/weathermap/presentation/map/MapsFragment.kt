@@ -2,17 +2,22 @@ package com.blogspot.soyamr.weathermap.presentation.map
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.app.SearchManager
 import android.content.pm.PackageManager
+import android.database.MatrixCursor
 import android.location.Location
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.provider.BaseColumns
+import android.view.*
+import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
+import androidx.cursoradapter.widget.CursorAdapter
+import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
@@ -30,10 +35,13 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.libraries.places.api.model.Place
 import org.koin.android.ext.android.get
 
 
 class MapsFragment : Fragment() {
+
+    lateinit var binding: FragmentMapsBinding
 
     private lateinit var googleMap: GoogleMap
 
@@ -41,6 +49,21 @@ class MapsFragment : Fragment() {
 
     private val customPinIcon: BitmapDescriptor by lazy {
         bitMapFromVector(R.drawable.ic_pin, requireContext())
+    }
+
+    //search view variables
+    private val searchView: SearchView by lazy {
+        binding.toolbar.menu.findItem(R.id.searchView).actionView as SearchView
+    }
+    private val cursorAdapter: CursorAdapter by lazy {
+        SimpleCursorAdapter(
+            requireContext(),
+            android.R.layout.simple_list_item_1,
+            null,
+            arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1),
+            intArrayOf(android.R.id.text1),
+            0
+        )
     }
 
     private val locationManagerListener = object : LocationListener {
@@ -102,6 +125,15 @@ class MapsFragment : Fragment() {
         }
     }
 
+    private val resolutionForResult: ActivityResultLauncher<IntentSenderRequest> =
+        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
+            if (activityResult.resultCode == RESULT_OK) {
+                locationManger.startLocationUpdates()
+            } else {
+                locationManagerListener.onSomethingWentWrong()
+            }
+        }
+
     private fun onUserClickOnMap(latLng: LatLng) {
         googleMap.clear()
         googleMap.addMarker(
@@ -111,15 +143,6 @@ class MapsFragment : Fragment() {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
         viewModel.showCityNameIfExists(latLng)
     }
-
-    private val resolutionForResult: ActivityResultLauncher<IntentSenderRequest> =
-        registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { activityResult ->
-            if (activityResult.resultCode == RESULT_OK) {
-                locationManger.startLocationUpdates()
-            } else {
-                locationManagerListener.onSomethingWentWrong()
-            }
-        }
 
     private fun showMessage(msgId: Int, showProgressBar: Boolean) {
         viewModel.switchProgressBarVisibility(showProgressBar)
@@ -133,11 +156,39 @@ class MapsFragment : Fragment() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
         setUpViewModelListeners()
+        setHasOptionsMenu(true)
+        setUpSearchView()
+    }
+
+    private fun setUpSearchView() {
+        searchView.findViewById<AutoCompleteTextView>(R.id.search_src_text).threshold = 1
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                searchView.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText?.trim()?.length ?: 0 >= 2)
+                    viewModel.searchFor(newText?.trim().toString())
+                return true
+            }
+        })
+        searchView.suggestionsAdapter = cursorAdapter
     }
 
     private fun setUpViewModelListeners() {
         viewModel.errorMessage.observe(viewLifecycleOwner, ::showError)
         viewModel.showWeatherDetails.observe(viewLifecycleOwner, ::openCityWeatherFragment)
+        viewModel.suggestions.observe(viewLifecycleOwner, ::showSuggestion)
+    }
+
+    private fun showSuggestion(suggestions: MutableList<Place>?) {
+        val cursor = MatrixCursor(arrayOf(BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1))
+        suggestions?.forEachIndexed { index, suggestion ->
+            cursor.addRow(arrayOf(index, suggestion.name))
+        }
+        cursorAdapter.changeCursor(cursor)
     }
 
     private fun openCityWeatherFragment(cityName: String?) {
@@ -165,6 +216,7 @@ class MapsFragment : Fragment() {
         return FragmentMapsBinding.inflate(inflater).run {
             viewModel = this@MapsFragment.viewModel
             lifecycleOwner = this@MapsFragment
+            this@MapsFragment.binding = this
             root
         }
     }

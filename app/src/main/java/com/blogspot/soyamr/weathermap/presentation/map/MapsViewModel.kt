@@ -9,12 +9,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.presentation.utils.SingleLiveEvent
+import com.blogspot.soyamr.weathermap.presentation.utils.extentions.add
+import com.blogspot.soyamr.weathermap.presentation.utils.extentions.clear
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.TypeFilter
+import com.google.android.libraries.places.api.net.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class MapsViewModel(private val geocoder: Geocoder) : ViewModel() {
-
+class MapsViewModel(private val geocoder: Geocoder, private val placesClient: PlacesClient) :
+    ViewModel() {
 
     private val _cityInfoContainerVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
     val cityInfoContainerVisibility: LiveData<Boolean> = _cityInfoContainerVisibility
@@ -31,7 +40,15 @@ class MapsViewModel(private val geocoder: Geocoder) : ViewModel() {
     private val _errorMessage: MutableLiveData<Int> = MutableLiveData(0)
     val errorMessage: LiveData<Int> = _errorMessage
 
+    private val _suggestions: MutableLiveData<MutableList<Place>> = MutableLiveData(ArrayList())
+    val suggestions: LiveData<MutableList<Place>> = _suggestions
+
     val showWeatherDetails: SingleLiveEvent<String> = SingleLiveEvent()
+
+    private var querySearchJob: Job? = null
+
+    // Specify the fields to return.
+    private val placeFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
     fun showCityNameIfExists(latLng: LatLng) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -40,7 +57,6 @@ class MapsViewModel(private val geocoder: Geocoder) : ViewModel() {
                 try {
                     val addresses: List<Address> =
                         geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-
                     if (addresses.isEmpty()) {
                         _errorMessage.postValue(R.string.no_city_found)
                         return@launch
@@ -61,6 +77,69 @@ class MapsViewModel(private val geocoder: Geocoder) : ViewModel() {
                 _errorMessage.postValue(R.string.googleServiceNotFound)
             }
         }
+    }
+
+    fun onCloseButtonClick() {
+        _cityInfoContainerVisibility.value = false
+    }
+
+    fun showMoreData() {
+        if (!cityName.value.isNullOrBlank())
+            showWeatherDetails.value = cityName.value
+        else
+            _errorMessage.value = R.string.choose_city
+    }
+
+    fun switchProgressBarVisibility(visibility: Boolean) {
+        _progressBarVisibility.value = visibility
+    }
+
+    fun searchFor(query: String) {
+        querySearchJob?.cancel()
+        querySearchJob = viewModelScope.launch {
+
+            _suggestions.clear()
+
+            val token = AutocompleteSessionToken.newInstance()
+            val request =
+                FindAutocompletePredictionsRequest.builder()
+                    .setTypeFilter(TypeFilter.REGIONS)
+                    .setSessionToken(token)
+                    .setQuery(query)
+                    .build()
+            placesClient.findAutocompletePredictions(request)
+                .addOnSuccessListener { response: FindAutocompletePredictionsResponse ->
+                    for (prediction: AutocompletePrediction in response.autocompletePredictions) {
+                        setPlaceSuggestion(prediction.placeId)
+                    }
+                }.addOnFailureListener { exception: Exception? ->
+                    if (exception is ApiException) {
+                        _errorMessage.value = (R.string.something_went_wrong)
+                    }
+                }
+        }
+    }
+
+    private fun setPlaceSuggestion(placeId: String) {
+        // Construct a request object, passing the place ID and fields array.
+        val requestObject = FetchPlaceRequest.newInstance(placeId, placeFields)
+        placesClient.fetchPlace(requestObject)
+            .addOnSuccessListener { response: FetchPlaceResponse ->
+                _suggestions.add(response.place)
+            }.addOnFailureListener { exception: Exception ->
+                if (exception is ApiException) {
+                    _errorMessage.value = (R.string.something_went_wrong)
+                }
+            }
+    }
+
+    fun showCity(cityInfo: Address) {
+        _cityInfoContainerVisibility.value = true
+        _cityName.value = cityInfo.locality
+        _locationFormattedString.value = getLocationAsDMS(Location("").also {
+            it.longitude = cityInfo.longitude
+            it.latitude = cityInfo.latitude
+        })
     }
 
     private fun getLocationAsDMS(location: Location, decimalPlace: Int = 1): String {
@@ -88,21 +167,4 @@ class MapsViewModel(private val geocoder: Geocoder) : ViewModel() {
         formattedCoordinates += "\""
         return formattedCoordinates
     }
-
-    fun onCloseButtonClick() {
-        _cityInfoContainerVisibility.value = false
-    }
-
-    fun showMoreData() {
-        if (!cityName.value.isNullOrBlank())
-            showWeatherDetails.value = cityName.value
-        else
-            _errorMessage.value = R.string.choose_city
-    }
-
-    fun switchProgressBarVisibility(visibility: Boolean) {
-        _progressBarVisibility.value = visibility
-    }
-
-
 }
