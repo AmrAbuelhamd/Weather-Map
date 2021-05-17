@@ -13,29 +13,39 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.databinding.FragmentMapsBinding
+import com.blogspot.soyamr.weathermap.presentation.city_weather.CityWeatherDetailsFragment
 import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationListener
 import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationManger
+import com.blogspot.soyamr.weathermap.presentation.utils.Utils.bitMapFromVector
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import org.koin.android.ext.android.get
+
 
 class MapsFragment : Fragment() {
 
-    private lateinit var binding: FragmentMapsBinding
-
     private lateinit var googleMap: GoogleMap
+
+    private val viewModel: MapsViewModel by lazy { get() }
+
+    private val customPinIcon: BitmapDescriptor by lazy {
+        bitMapFromVector(R.drawable.ic_pin, requireContext())
+    }
 
     private val locationManagerListener = object : LocationListener {
         override fun onLocationUpdated(userLocation: Location) {
-            binding.progressCircular.isVisible = false
+            viewModel.switchProgressBarVisibility(false)
             val userLocationLatLng = LatLng(userLocation.latitude, userLocation.longitude)
             googleMap.addMarker(MarkerOptions().position(userLocationLatLng))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocationLatLng))
@@ -87,6 +97,19 @@ class MapsFragment : Fragment() {
         } else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
+        googleMap.setOnMapClickListener {
+            onUserClickOnMap(it)
+        }
+    }
+
+    private fun onUserClickOnMap(latLng: LatLng) {
+        googleMap.clear()
+        googleMap.addMarker(
+            MarkerOptions().position(latLng)
+                .icon(customPinIcon)
+        )
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
+        viewModel.showCityNameIfExists(latLng)
     }
 
     private val resolutionForResult: ActivityResultLauncher<IntentSenderRequest> =
@@ -98,9 +121,8 @@ class MapsFragment : Fragment() {
             }
         }
 
-
     private fun showMessage(msgId: Int, showProgressBar: Boolean) {
-        binding.progressCircular.isVisible = showProgressBar
+        viewModel.switchProgressBarVisibility(showProgressBar)
         Toast.makeText(
             requireContext(), getString(msgId), Toast.LENGTH_SHORT
         ).show()
@@ -110,6 +132,29 @@ class MapsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+        setUpViewModelListeners()
+    }
+
+    private fun setUpViewModelListeners() {
+        viewModel.errorMessage.observe(viewLifecycleOwner, ::showError)
+        viewModel.showWeatherDetails.observe(viewLifecycleOwner, ::openCityWeatherFragment)
+    }
+
+    private fun openCityWeatherFragment(cityName: String?) {
+        cityName?.let {
+            requireActivity().supportFragmentManager.commit {
+                replace<CityWeatherDetailsFragment>(R.id.fragment_container_view)
+                setReorderingAllowed(true)
+            }
+        }
+    }
+
+    private fun showError(errorStringId: Int?) {
+        errorStringId?.let {
+            if (it != 0) {
+                showMessage(it, false)
+            }
+        }
     }
 
     override fun onCreateView(
@@ -118,7 +163,8 @@ class MapsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return FragmentMapsBinding.inflate(inflater).run {
-            binding = this
+            viewModel = this@MapsFragment.viewModel
+            lifecycleOwner = this@MapsFragment
             root
         }
     }

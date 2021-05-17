@@ -6,4 +6,8 @@
     <string name="can_not_find_location">we can\'t get your location on the map</string>
     <string name="getting_your_location">getting your current location wait..</string>
     <string name="something_went_wrong">something went wrong</string>
+    <string name="show_weather">Show Weather</string>
+    <string name="googleServiceNotFound">can\'t find city name, google service is needed.</string>
+    <string name="no_city_found">no city found in this location</string>
+    <string name="choose_city">choose city</string>
 </resources>
