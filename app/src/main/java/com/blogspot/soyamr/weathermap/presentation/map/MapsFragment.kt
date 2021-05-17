@@ -45,8 +45,7 @@ class MapsFragment : Fragment() {
 
     private val locationManagerListener = object : LocationListener {
         override fun onLocationUpdated(userLocation: Location) {
-            viewModel.progressBarVisibility.value =
-                false // is it okay to change variables of viewModel like this?!
+            viewModel.switchProgressBarVisibility(false)
             val userLocationLatLng = LatLng(userLocation.latitude, userLocation.longitude)
             googleMap.addMarker(MarkerOptions().position(userLocationLatLng))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocationLatLng))
@@ -123,7 +122,7 @@ class MapsFragment : Fragment() {
         }
 
     private fun showMessage(msgId: Int, showProgressBar: Boolean) {
-        viewModel.progressBarVisibility.value = showProgressBar
+        viewModel.switchProgressBarVisibility(showProgressBar)
         Toast.makeText(
             requireContext(), getString(msgId), Toast.LENGTH_SHORT
         ).show()
