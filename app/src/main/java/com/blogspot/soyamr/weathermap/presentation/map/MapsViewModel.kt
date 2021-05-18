@@ -99,8 +99,9 @@ class MapsViewModel(
     }
 
     fun searchFor(query: String) {
-        querySearchJob?.cancel()
         _cityInfoContainerVisibility.value = false
+
+        querySearchJob?.cancel()
         querySearchJob = viewModelScope.launch {
 
             _suggestions.value = ArrayList()
@@ -126,24 +127,24 @@ class MapsViewModel(
     }
 
     fun showCity(cityPositionInSuggestions: Int) {
-        val currentPlace = suggestions.value?.get(cityPositionInSuggestions)
-        if (currentPlace == null) {
+        val currentCity = suggestions.value?.get(cityPositionInSuggestions)
+        if (currentCity == null) {
             _errorMessage.value = (R.string.something_went_wrong)
             return
         }
 
-        val currentPlaceLatLng = currentPlace.latLng
-        if (currentPlaceLatLng == null) {
+        val currentCityLatLng = currentCity.latLng
+        if (currentCityLatLng == null) {
             _errorMessage.value = (R.string.something_went_wrong)
             return
         }
 
         _cityInfoContainerVisibility.value = true
-        _currentLatLng.value = currentPlaceLatLng
-        _cityName.value = currentPlace.name
+        _currentLatLng.value = currentCityLatLng
+        _cityName.value = currentCity.name
         _locationFormattedString.value = getLocationAsDMS(Location("").also {
-            it.longitude = currentPlaceLatLng.longitude
-            it.latitude = currentPlaceLatLng.latitude
+            it.longitude = currentCityLatLng.longitude
+            it.latitude = currentCityLatLng.latitude
         })
     }
 
