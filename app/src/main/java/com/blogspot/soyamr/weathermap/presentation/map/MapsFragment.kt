@@ -8,7 +8,9 @@ import android.database.MatrixCursor
 import android.location.Location
 import android.os.Bundle
 import android.provider.BaseColumns
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -200,7 +202,7 @@ class MapsFragment : Fragment() {
         viewModel.currentLatLng.observe(viewLifecycleOwner, ::showLocationOnMap)
     }
 
-    private fun showSuggestion(suggestions: MutableList<Place>?) {
+    private fun showSuggestion(suggestions: List<Place>?) {
         val cursor = MatrixCursor(arrayOf(BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1))
         suggestions?.forEachIndexed { index, suggestion ->
             cursor.addRow(arrayOf(index, suggestion.name))
@@ -230,12 +232,11 @@ class MapsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return FragmentMapsBinding.inflate(inflater).run {
-            viewModel = this@MapsFragment.viewModel
-            lifecycleOwner = this@MapsFragment
-            this@MapsFragment.binding = this
-            root
-        }
+        return FragmentMapsBinding.inflate(inflater).also {
+            it.viewModel = this.viewModel
+            it.lifecycleOwner = this
+            this.binding = it
+        }.root
     }
 
     override fun onPause() {

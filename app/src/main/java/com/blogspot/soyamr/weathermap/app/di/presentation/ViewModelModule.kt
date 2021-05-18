@@ -12,7 +12,6 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     viewModel {
-        Places.initialize(androidContext(), androidContext().getString(R.string.google_maps_key))
         MapsViewModel(Geocoder(androidContext()), Places.createClient(androidContext()))
     }
     viewModel { CityWeatherDetailsViewModel(get()) }

@@ -9,8 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.presentation.utils.SingleLiveEvent
-import com.blogspot.soyamr.weathermap.presentation.utils.extentions.add
-import com.blogspot.soyamr.weathermap.presentation.utils.extentions.clear
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompletePrediction
@@ -22,7 +20,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class MapsViewModel(private val geocoder: Geocoder, private val placesClient: PlacesClient) :
+class MapsViewModel(
+    private val geocoder: Geocoder,
+    private val placesClient: PlacesClient
+) :
     ViewModel() {
 
     private val _cityInfoContainerVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -40,8 +41,8 @@ class MapsViewModel(private val geocoder: Geocoder, private val placesClient: Pl
     private val _errorMessage: MutableLiveData<Int> = MutableLiveData(0)
     val errorMessage: LiveData<Int> = _errorMessage
 
-    private val _suggestions: MutableLiveData<MutableList<Place>> = MutableLiveData(ArrayList())
-    val suggestions: LiveData<MutableList<Place>> = _suggestions
+    private val _suggestions: MutableLiveData<List<Place>> = MutableLiveData(ArrayList())
+    val suggestions: LiveData<List<Place>> = _suggestions
 
     private val _currentLatLng: MutableLiveData<LatLng> = MutableLiveData()
     val currentLatLng: LiveData<LatLng> = _currentLatLng
@@ -102,7 +103,7 @@ class MapsViewModel(private val geocoder: Geocoder, private val placesClient: Pl
         _cityInfoContainerVisibility.value = false
         querySearchJob = viewModelScope.launch {
 
-            _suggestions.clear()
+            _suggestions.value = ArrayList()
 
             val token = AutocompleteSessionToken.newInstance()
             val request =
@@ -140,7 +141,7 @@ class MapsViewModel(private val geocoder: Geocoder, private val placesClient: Pl
         val requestObject = FetchPlaceRequest.newInstance(placeId, placeFields)
         placesClient.fetchPlace(requestObject)
             .addOnSuccessListener { response: FetchPlaceResponse ->
-                _suggestions.add(response.place)
+                _suggestions.value = _suggestions.value?.plus(response.place)
             }.addOnFailureListener { exception: Exception ->
                 if (exception is ApiException) {
                     _errorMessage.value = (R.string.something_went_wrong)
