@@ -43,13 +43,13 @@ import org.koin.android.ext.android.get
 
 class MapsFragment : Fragment() {
 
-    lateinit var binding: FragmentMapsBinding
+    private lateinit var binding: FragmentMapsBinding
 
     private lateinit var googleMap: GoogleMap
 
     private val viewModel: MapsViewModel by lazy { get() }
 
-    private val customPinIcon: BitmapDescriptor by lazy {
+    private val customPinIcon: BitmapDescriptor? by lazy {
         bitMapFromVector(R.drawable.ic_pin, requireContext())
     }
 

@@ -126,13 +126,24 @@ class MapsViewModel(
     }
 
     fun showCity(cityPositionInSuggestions: Int) {
+        val currentPlace = suggestions.value?.get(cityPositionInSuggestions)
+        if (currentPlace == null) {
+            _errorMessage.value = (R.string.something_went_wrong)
+            return
+        }
+
+        val currentPlaceLatLng = currentPlace.latLng
+        if (currentPlaceLatLng == null) {
+            _errorMessage.value = (R.string.something_went_wrong)
+            return
+        }
+
         _cityInfoContainerVisibility.value = true
-        val cityInfo = suggestions.value!![cityPositionInSuggestions]
-        _currentLatLng.value = cityInfo.latLng
-        _cityName.value = cityInfo.name
+        _currentLatLng.value = currentPlaceLatLng
+        _cityName.value = currentPlace.name
         _locationFormattedString.value = getLocationAsDMS(Location("").also {
-            it.longitude = cityInfo.latLng!!.longitude
-            it.latitude = cityInfo.latLng!!.latitude
+            it.longitude = currentPlaceLatLng.longitude
+            it.latitude = currentPlaceLatLng.latitude
         })
     }
 
