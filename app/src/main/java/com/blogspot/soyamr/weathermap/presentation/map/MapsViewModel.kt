@@ -43,6 +43,9 @@ class MapsViewModel(private val geocoder: Geocoder, private val placesClient: Pl
     private val _suggestions: MutableLiveData<MutableList<Place>> = MutableLiveData(ArrayList())
     val suggestions: LiveData<MutableList<Place>> = _suggestions
 
+    private val _currentLatLng: MutableLiveData<LatLng> = MutableLiveData()
+    val currentLatLng: LiveData<LatLng> = _currentLatLng
+
     val showWeatherDetails: SingleLiveEvent<String> = SingleLiveEvent()
 
     private var querySearchJob: Job? = null
@@ -83,7 +86,7 @@ class MapsViewModel(private val geocoder: Geocoder, private val placesClient: Pl
         _cityInfoContainerVisibility.value = false
     }
 
-    fun showMoreData() {
+    fun openWeatherFragment() {
         if (!cityName.value.isNullOrBlank())
             showWeatherDetails.value = cityName.value
         else
@@ -96,6 +99,7 @@ class MapsViewModel(private val geocoder: Geocoder, private val placesClient: Pl
 
     fun searchFor(query: String) {
         querySearchJob?.cancel()
+        _cityInfoContainerVisibility.value = false
         querySearchJob = viewModelScope.launch {
 
             _suggestions.clear()
@@ -120,6 +124,17 @@ class MapsViewModel(private val geocoder: Geocoder, private val placesClient: Pl
         }
     }
 
+    fun showCity(cityPositionInSuggestions: Int) {
+        _cityInfoContainerVisibility.value = true
+        val cityInfo = suggestions.value!![cityPositionInSuggestions]
+        _currentLatLng.value = cityInfo.latLng
+        _cityName.value = cityInfo.name
+        _locationFormattedString.value = getLocationAsDMS(Location("").also {
+            it.longitude = cityInfo.latLng!!.longitude
+            it.latitude = cityInfo.latLng!!.latitude
+        })
+    }
+
     private fun setPlaceSuggestion(placeId: String) {
         // Construct a request object, passing the place ID and fields array.
         val requestObject = FetchPlaceRequest.newInstance(placeId, placeFields)
@@ -131,15 +146,6 @@ class MapsViewModel(private val geocoder: Geocoder, private val placesClient: Pl
                     _errorMessage.value = (R.string.something_went_wrong)
                 }
             }
-    }
-
-    fun showCity(cityInfo: Address) {
-        _cityInfoContainerVisibility.value = true
-        _cityName.value = cityInfo.locality
-        _locationFormattedString.value = getLocationAsDMS(Location("").also {
-            it.longitude = cityInfo.longitude
-            it.latitude = cityInfo.latitude
-        })
     }
 
     private fun getLocationAsDMS(location: Location, decimalPlace: Int = 1): String {

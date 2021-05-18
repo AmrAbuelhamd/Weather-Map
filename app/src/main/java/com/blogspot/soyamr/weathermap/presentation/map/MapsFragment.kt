@@ -135,13 +135,17 @@ class MapsFragment : Fragment() {
         }
 
     private fun onUserClickOnMap(latLng: LatLng) {
+        showLocationOnMap(latLng)
+        viewModel.showCityNameIfExists(latLng)
+    }
+
+    private fun showLocationOnMap(latLng: LatLng) {
         googleMap.clear()
         googleMap.addMarker(
             MarkerOptions().position(latLng)
                 .icon(customPinIcon)
         )
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
-        viewModel.showCityNameIfExists(latLng)
     }
 
     private fun showMessage(msgId: Int, showProgressBar: Boolean) {
@@ -153,10 +157,10 @@ class MapsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
         setUpViewModelListeners()
-        setHasOptionsMenu(true)
         setUpSearchView()
     }
 
@@ -175,12 +179,25 @@ class MapsFragment : Fragment() {
             }
         })
         searchView.suggestionsAdapter = cursorAdapter
+
+        searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+            override fun onSuggestionSelect(position: Int): Boolean {
+                return false
+            }
+
+            override fun onSuggestionClick(position: Int): Boolean {
+                searchView.clearFocus()
+                viewModel.showCity(position)
+                return true
+            }
+        })
     }
 
     private fun setUpViewModelListeners() {
         viewModel.errorMessage.observe(viewLifecycleOwner, ::showError)
         viewModel.showWeatherDetails.observe(viewLifecycleOwner, ::openCityWeatherFragment)
         viewModel.suggestions.observe(viewLifecycleOwner, ::showSuggestion)
+        viewModel.currentLatLng.observe(viewLifecycleOwner, ::showLocationOnMap)
     }
 
     private fun showSuggestion(suggestions: MutableList<Place>?) {

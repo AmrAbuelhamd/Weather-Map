@@ -22,7 +22,7 @@ Weather Map application
 создание floating fragment.
 
 
-6.сделать панель поиска                          [estimated time = 2 hour] [actual time  = ..] started at one pm
+6.сделать панель поиска                          [estimated time = 2 hour] [actual time  = 05:00 + 00:00 на испровление ]
 Получение предложения названия города из SDK карты Google, пока пользователь пишет текст.
 
 

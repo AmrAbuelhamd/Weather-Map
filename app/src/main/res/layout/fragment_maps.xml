@@ -70,7 +70,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="12dp"
-                android:onClick="@{()->viewModel.showMoreData()}"
+                android:onClick="@{()->viewModel.openWeatherFragment()}"
                 android:text="@string/show_weather"
                 android:textColor="@color/blu"
                 app:cornerRadius="15dp"
