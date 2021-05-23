@@ -18,11 +18,13 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import androidx.fragment.app.setFragmentResult
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.databinding.FragmentMapsBinding
 import com.blogspot.soyamr.weathermap.presentation.city_weather.CityWeatherDetailsFragment
@@ -212,6 +214,10 @@ class MapsFragment : Fragment() {
 
     private fun openCityWeatherFragment(cityName: String?) {
         cityName?.let {
+            setFragmentResult(
+                CityWeatherDetailsFragment.CITY_REQUEST_KEY,
+                bundleOf(CityWeatherDetailsFragment.CITY_NAME_BUNDLE_KEY to it)
+            )
             requireActivity().supportFragmentManager.commit {
                 replace<CityWeatherDetailsFragment>(R.id.fragment_container_view)
                 setReorderingAllowed(true)
