@@ -1,6 +1,28 @@
 package com.blogspot.soyamr.weathermap.presentation.base
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.blogspot.soyamr.data.utils.NoInternetException
+import com.blogspot.soyamr.weathermap.R
+import kotlinx.coroutines.CoroutineExceptionHandler
 
-class BaseViewModel : ViewModel() {
+open class BaseViewModel : ViewModel() {
+
+    protected val _errorMessage: MutableLiveData<Int> = MutableLiveData(0)
+    val errorMessage: LiveData<Int> = _errorMessage
+
+    protected val _progressBarVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
+    val progressBarVisibility: LiveData<Boolean> = _progressBarVisibility
+
+    val handler = CoroutineExceptionHandler { _, exception ->
+        if (exception is NoInternetException)
+            _errorMessage.value = R.string.no_internet
+        else
+            _errorMessage.value = R.string.something_went_wrong
+    }
+
+    fun switchProgressBarVisibility(visibility: Boolean) {
+        _progressBarVisibility.value = visibility
+    }
 }

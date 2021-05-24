@@ -5,9 +5,9 @@ import android.location.Geocoder
 import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.blogspot.soyamr.weathermap.R
+import com.blogspot.soyamr.weathermap.presentation.base.BaseViewModel
 import com.blogspot.soyamr.weathermap.presentation.utils.SingleLiveEvent
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.model.LatLng
@@ -23,23 +23,16 @@ import kotlinx.coroutines.launch
 class MapsViewModel(
     private val geocoder: Geocoder,
     private val placesClient: PlacesClient
-) :
-    ViewModel() {
+) : BaseViewModel() {
 
     private val _cityInfoContainerVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
     val cityInfoContainerVisibility: LiveData<Boolean> = _cityInfoContainerVisibility
-
-    private val _progressBarVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
-    val progressBarVisibility: LiveData<Boolean> = _progressBarVisibility
 
     private val _cityName: MutableLiveData<String> = MutableLiveData("")
     val cityName: LiveData<String> = _cityName
 
     private val _locationFormattedString: MutableLiveData<String> = MutableLiveData("")
     val locationFormattedString: LiveData<String> = _locationFormattedString
-
-    private val _errorMessage: MutableLiveData<Int> = MutableLiveData(0)
-    val errorMessage: LiveData<Int> = _errorMessage
 
     private val _suggestions: MutableLiveData<List<Place>> = MutableLiveData(ArrayList())
     val suggestions: LiveData<List<Place>> = _suggestions
@@ -55,7 +48,7 @@ class MapsViewModel(
     private val placeFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
     fun showCityNameIfExists(latLng: LatLng) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + handler) {
             _cityInfoContainerVisibility.postValue(false)
             if (Geocoder.isPresent()) {
                 try {
@@ -94,15 +87,11 @@ class MapsViewModel(
             _errorMessage.value = R.string.choose_city
     }
 
-    fun switchProgressBarVisibility(visibility: Boolean) {
-        _progressBarVisibility.value = visibility
-    }
-
     fun searchFor(query: String) {
         _cityInfoContainerVisibility.value = false
 
         querySearchJob?.cancel()
-        querySearchJob = viewModelScope.launch {
+        querySearchJob = viewModelScope.launch(handler) {
 
             _suggestions.value = ArrayList()
 

@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,12 +20,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.fragment.app.setFragmentResult
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.databinding.FragmentMapsBinding
+import com.blogspot.soyamr.weathermap.presentation.base.BaseFragment
 import com.blogspot.soyamr.weathermap.presentation.city_weather.CityWeatherDetailsFragment
 import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationListener
 import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationManger
@@ -43,13 +42,9 @@ import com.google.android.libraries.places.api.model.Place
 import org.koin.android.ext.android.get
 
 
-class MapsFragment : Fragment() {
-
-    private lateinit var binding: FragmentMapsBinding
+class MapsFragment : BaseFragment<MapsViewModel, FragmentMapsBinding>(R.layout.fragment_maps) {
 
     private lateinit var googleMap: GoogleMap
-
-    private val viewModel: MapsViewModel by lazy { get() }
 
     private val customPinIcon: BitmapDescriptor? by lazy {
         bitMapFromVector(R.drawable.ic_pin, requireContext())
@@ -152,13 +147,6 @@ class MapsFragment : Fragment() {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15F))
     }
 
-    private fun showMessage(msgId: Int, showProgressBar: Boolean) {
-        viewModel.switchProgressBarVisibility(showProgressBar)
-        Toast.makeText(
-            requireContext(), getString(msgId), Toast.LENGTH_SHORT
-        ).show()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
@@ -198,7 +186,6 @@ class MapsFragment : Fragment() {
     }
 
     private fun setUpViewModelListeners() {
-        viewModel.errorMessage.observe(viewLifecycleOwner, ::showError)
         viewModel.showWeatherDetails.observe(viewLifecycleOwner, ::openCityWeatherFragment)
         viewModel.suggestions.observe(viewLifecycleOwner, ::showSuggestion)
         viewModel.currentLatLng.observe(viewLifecycleOwner, ::showLocationOnMap)
@@ -225,28 +212,13 @@ class MapsFragment : Fragment() {
         }
     }
 
-    private fun showError(errorStringId: Int?) {
-        errorStringId?.let {
-            if (it != 0) {
-                showMessage(it, false)
-            }
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return FragmentMapsBinding.inflate(inflater).also {
-            it.viewModel = this.viewModel
-            it.lifecycleOwner = this
-            this.binding = it
-        }.root
-    }
-
     override fun onPause() {
         super.onPause()
         locationManger.stopLocationUpdates()
+    }
+
+    override fun setViewModel() {
+        viewModel = get()
+        binding.viewModel = viewModel
     }
 }
