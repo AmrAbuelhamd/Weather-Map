@@ -14,11 +14,12 @@ class CityWeatherDetailsFragment :
         R.layout.fragment_city_weather_details
     ) {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setFragmentResultListener(CITY_REQUEST_KEY) { _, bundle ->
             val cityName = bundle.getString(CITY_NAME_BUNDLE_KEY)
-            viewModel.setCityWeatherInfo(cityName)
+            viewModel.setCityWeatherInfo(cityName)// viewModel is initialized inside onCreateView
+                                // how does it still work even though it's not initialized yet?
         }
     }
 

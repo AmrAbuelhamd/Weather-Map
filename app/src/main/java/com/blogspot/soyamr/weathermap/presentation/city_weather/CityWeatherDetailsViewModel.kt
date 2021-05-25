@@ -3,10 +3,11 @@ package com.blogspot.soyamr.weathermap.presentation.city_weather
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.blogspot.soyamr.domain.models.Weather
 import com.blogspot.soyamr.domain.usecases.GetCityWeatherByName
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.presentation.base.BaseViewModel
+import com.blogspot.soyamr.weathermap.presentation.converters.toPresenter
+import com.blogspot.soyamr.weathermap.presentation.models.Weather
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -19,10 +20,10 @@ class CityWeatherDetailsViewModel(
 
     fun setCityWeatherInfo(cityName: String?) {
         if (cityName.isNullOrBlank()) {
-            _errorMessage.value = R.string.something_went_wrong
+            _errorMessage.postValue(R.string.something_went_wrong)
         } else {
             viewModelScope.launch(Dispatchers.IO + handler) {
-                _cityWeatherInfo.postValue(getCityWeatherByName(cityName))
+                _cityWeatherInfo.postValue(getCityWeatherByName(cityName).toPresenter())
             }
         }
     }

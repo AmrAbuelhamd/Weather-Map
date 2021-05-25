@@ -11,4 +11,21 @@
     <string name="no_city_found">no city found in this location</string>
     <string name="choose_city">choose city</string>
     <string name="search_places">Search Places</string>
+    <string name="city_name">City Name</string>
+    <string name="c">°C</string>
+    <string name="humidity">humidity</string>
+    <string name="wind_speed">wind speed</string>
+    <string name="pressure">pressure</string>
+
+    <string name="broken_clouds">Broken Clouds</string>
+    <string name="clear_sky">Clear Sky</string>
+    <string name="few_clouds">Few Clouds</string>
+    <string name="mist">Mist</string>
+    <string name="rain">Rain</string>
+    <string name="scattered_clouds">Scattered Clouds</string>
+    <string name="shower_rain">ShowerRain</string>
+    <string name="snow">Snow</string>
+    <string name="thunderstorm">Thunderstorm</string>
+    <string name="place_holder">weather description placeholder</string>
+    <string name="weather_description">weather description</string>
 </resources>

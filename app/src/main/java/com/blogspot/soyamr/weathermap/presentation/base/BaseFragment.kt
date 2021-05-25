@@ -33,7 +33,7 @@ abstract class BaseFragment<T : BaseViewModel, DB : ViewDataBinding>(
 
     abstract fun setViewModel()
 
-    protected fun showError(errorStringId: Int?) {
+    private fun showError(errorStringId: Int?) {
         errorStringId?.let {
             if (it != 0) {
                 showMessage(it, false)
