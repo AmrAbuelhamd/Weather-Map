@@ -1,4 +1,4 @@
-package com.blogspot.soyamr.weathermap.presentation.city_weather
+package com.blogspot.soyamr.weathermap.presentation.fragments.city_weather
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

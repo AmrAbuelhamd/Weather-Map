@@ -4,10 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.add
 import androidx.fragment.app.commit
-import com.blogspot.soyamr.domain.usecases.GetCityWeatherByName
 import com.blogspot.soyamr.weathermap.R
-import com.blogspot.soyamr.weathermap.presentation.map.MapsFragment
-import org.koin.android.ext.android.inject
+import com.blogspot.soyamr.weathermap.presentation.fragments.map.MapsFragment
 
 class MainActivity : AppCompatActivity() {
 

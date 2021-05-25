@@ -30,7 +30,9 @@ object Utils {
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
-    fun getUrl(value: String):String {
+    fun getUrl(value: String): String {
         return "https://openweathermap.org/img/wn/$value@2x.png"
     }
+
+    fun convertTOmmHg(hPa: Double) = hPa / 1.33322387415
 }

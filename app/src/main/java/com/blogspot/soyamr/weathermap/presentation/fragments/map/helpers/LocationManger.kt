@@ -1,4 +1,4 @@
-package com.blogspot.soyamr.weathermap.presentation.map.helpers
+package com.blogspot.soyamr.weathermap.presentation.fragments.map.helpers
 
 import android.content.Context
 import android.content.IntentSender

@@ -10,7 +10,7 @@ fun DomainWeather.toPresenter() =
         cityName,
         humidity.toString(),
         temp.toString(),
-        pressure.toString(),
+        "%.2f".format(Utils.convertTOmmHg(pressure)) + " mm Hg",
         direction.symbol + " " + windSpeed.toInt().toString() + " m/s",
         WeatherDescription.getStringId(generalDescription),
         WeatherDescription.getImageSrcId(generalDescription),

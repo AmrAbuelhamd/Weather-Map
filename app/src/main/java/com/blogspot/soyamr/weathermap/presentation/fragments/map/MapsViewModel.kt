@@ -1,4 +1,4 @@
-package com.blogspot.soyamr.weathermap.presentation.map
+package com.blogspot.soyamr.weathermap.presentation.fragments.map
 
 import android.location.Address
 import android.location.Geocoder

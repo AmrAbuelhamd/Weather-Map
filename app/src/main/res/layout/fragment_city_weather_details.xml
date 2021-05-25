@@ -52,11 +52,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
+            android:contentDescription="@string/weather_icon_description"
             app:image="@{viewModel.cityWeatherInfo.iconUrl}"
             app:layout_constraintStart_toStartOf="parent"
-            tools:src="@drawable/ic_description_placeholder"
             app:layout_constraintTop_toBottomOf="@+id/degreesTextView"
-            android:contentDescription="@string/weather_icon_description" />
+            tools:src="@drawable/ic_description_placeholder" />
 
         <TextView
             android:id="@+id/weatherDescTextView"
@@ -64,9 +64,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
+            android:text='@{viewModel.cityWeatherInfo.generalDescriptionId != 0 ? context.getString(viewModel.cityWeatherInfo.generalDescriptionId) : "placeholder"}'
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
-            android:text='@{viewModel.cityWeatherInfo.generalDescriptionId != 0 ? context.getString(viewModel.cityWeatherInfo.generalDescriptionId) : "placeholder"}'
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             tools:text="Few Clouds" />
@@ -89,9 +89,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
+            android:text='@{viewModel.cityWeatherInfo.humidity + "%"}'
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
-            android:text='@{viewModel.cityWeatherInfo.humidity + "%"}'
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview4"
             tools:text="90%" />
@@ -115,9 +115,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
+            android:text='@{viewModel.cityWeatherInfo.windSpeed}'
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
-            android:text='@{viewModel.cityWeatherInfo.windSpeed}'
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview5"
             tools:text="456" />
@@ -140,9 +140,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
+            android:text="@{viewModel.cityWeatherInfo.pressure}"
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
-            android:text="@{viewModel.cityWeatherInfo.pressure}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview6"
             tools:text="456" />
@@ -169,6 +169,6 @@
 
         <variable
             name="viewModel"
-            type="com.blogspot.soyamr.weathermap.presentation.city_weather.CityWeatherDetailsViewModel" />
+            type="com.blogspot.soyamr.weathermap.presentation.fragments.city_weather.CityWeatherDetailsViewModel" />
     </data>
 </layout>

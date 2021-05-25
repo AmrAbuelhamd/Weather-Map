@@ -1,4 +1,4 @@
-package com.blogspot.soyamr.weathermap.presentation.map
+package com.blogspot.soyamr.weathermap.presentation.fragments.map
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
@@ -8,9 +8,7 @@ import android.database.MatrixCursor
 import android.location.Location
 import android.os.Bundle
 import android.provider.BaseColumns
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -26,9 +24,9 @@ import androidx.fragment.app.setFragmentResult
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.databinding.FragmentMapsBinding
 import com.blogspot.soyamr.weathermap.presentation.base.BaseFragment
-import com.blogspot.soyamr.weathermap.presentation.city_weather.CityWeatherDetailsFragment
-import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationListener
-import com.blogspot.soyamr.weathermap.presentation.map.helpers.LocationManger
+import com.blogspot.soyamr.weathermap.presentation.fragments.city_weather.CityWeatherDetailsFragment
+import com.blogspot.soyamr.weathermap.presentation.fragments.map.helpers.LocationListener
+import com.blogspot.soyamr.weathermap.presentation.fragments.map.helpers.LocationManger
 import com.blogspot.soyamr.weathermap.presentation.utils.Utils.bitMapFromVector
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -70,8 +68,7 @@ class MapsFragment : BaseFragment<MapsViewModel, FragmentMapsBinding>(R.layout.f
             viewModel.switchProgressBarVisibility(false)
             val userLocationLatLng = LatLng(userLocation.latitude, userLocation.longitude)
             googleMap.addMarker(MarkerOptions().position(userLocationLatLng))
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(userLocationLatLng))
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(15F))
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocationLatLng,15F))
         }
 
         override fun hasLocationPermission() =
