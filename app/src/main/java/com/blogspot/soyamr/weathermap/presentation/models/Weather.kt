@@ -6,8 +6,7 @@ data class Weather(
     val temp: String,
     val pressure: String,
     val windSpeed: String,
-    val direction: String,
-    val generalDescription: Int,
+    val generalDescriptionId: Int,
     val generalDescriptionImgId: Int,
-    val iconCode: String
+    val iconUrl: String
 )

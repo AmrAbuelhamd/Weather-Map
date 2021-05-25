@@ -26,6 +26,7 @@
     <string name="shower_rain">ShowerRain</string>
     <string name="snow">Snow</string>
     <string name="thunderstorm">Thunderstorm</string>
-    <string name="place_holder">weather description placeholder</string>
+    <string name="place_holder">desc placeholder</string>
     <string name="weather_description">weather description</string>
+    <string name="weather_icon_description">weather icon description</string>
 </resources>

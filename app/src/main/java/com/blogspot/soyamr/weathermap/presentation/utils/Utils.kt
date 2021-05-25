@@ -29,4 +29,8 @@ object Utils {
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
+
+    fun getUrl(value: String):String {
+        return "https://openweathermap.org/img/wn/$value@2x.png"
+    }
 }

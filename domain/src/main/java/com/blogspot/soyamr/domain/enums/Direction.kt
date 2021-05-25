@@ -1,7 +1,7 @@
 package com.blogspot.soyamr.domain.enums
 
 enum class Direction(val symbol: String) {
-    North("n"), West("w"), East("e"), South("s");
+    North("N"), West("W"), East("E"), South("S");
 
     companion object {
         fun getDirection(deg: Int) = when (deg) {
