@@ -17,8 +17,8 @@
 
 
     <string name="humidity_percent">%1$s%%</string>
-    <string name="wind_speed"><![CDATA[<b>%1$s %2$s m/s</b>]]></string>
-    <string name="pressure_unit"><![CDATA[<b>%1$s mm Hg</b>]]></string>
+    <string name="wind_speed">%1$s %2$s m/s</string>
+    <string name="pressure_unit">%1$s mm Hg</string>
 
 
     <string name="broken_clouds">Broken Clouds</string>

@@ -17,9 +17,9 @@
     <string name="pressure">الضغط</string>
 
 
-    <string name="humidity_percent"><![CDATA[<b>%%%1$s</b>]]></string>
-    <string name="wind_speed"><![CDATA[<b> %1$s %2$s</b> م/ثانية]]></string>
-    <string name="pressure_unit"><![CDATA[<b>%1$s</b> ملم زئبق]]></string>
+    <string name="humidity_percent">%%%1$s</string>
+    <string name="wind_speed"> %1$s %2$s م/ثانية</string>
+    <string name="pressure_unit">%1$s ملم زئبق</string>
 
 
     <string name="broken_clouds">سحب متقطعة</string>
