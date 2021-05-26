@@ -45,6 +45,8 @@ class CityWeatherDetailsFragment : Fragment() {
                 setReorderingAllowed(true)
             }
         }
+        binding.toolbar.navigationIcon?.isAutoMirrored = true
+
         observeViewModelLiveData()
 
         return binding.root

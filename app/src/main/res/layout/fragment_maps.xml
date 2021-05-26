@@ -25,7 +25,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:menu="@menu/menu_maps"
-            app:title="Global Weather"
+            app:title="@string/global_weather"
             app:titleTextAppearance="@style/Toolbar.TitleText"
             app:titleTextColor="@color/black" />
 
