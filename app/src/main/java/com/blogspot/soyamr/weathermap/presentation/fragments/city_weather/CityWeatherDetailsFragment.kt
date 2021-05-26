@@ -1,5 +1,6 @@
 package com.blogspot.soyamr.weathermap.presentation.fragments.city_weather
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +38,6 @@ class CityWeatherDetailsFragment : Fragment() {
             it.lifecycleOwner = this
             it.viewModel = viewModel
         }
-
         binding.toolbar.setNavigationOnClickListener()
         {
             requireActivity().supportFragmentManager.commit {
@@ -46,6 +46,20 @@ class CityWeatherDetailsFragment : Fragment() {
             }
         }
         binding.toolbar.navigationIcon?.isAutoMirrored = true
+        binding.toolbar.setOnMenuItemClickListener {
+            if (it.itemId == R.id.share) {
+                viewModel.cityWeatherInfo.value?.cityName?.let {
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, getString(R.string.wanna_know, it))
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    startActivity(shareIntent)
+                }
+            }
+            true
+        }
 
         observeViewModelLiveData()
 
@@ -59,13 +73,13 @@ class CityWeatherDetailsFragment : Fragment() {
     private fun showError(errorStringId: Int?) {
         errorStringId?.let {
             if (it != 0) {
-                showMessage(it, false)
+                showMessage(it)
             }
         }
     }
 
-    private fun showMessage(msgId: Int, showProgressBar: Boolean) {
-        viewModel.switchProgressBarVisibility(showProgressBar)
+    private fun showMessage(msgId: Int) {
+        viewModel.switchProgressBarVisibility(false)
         Toast.makeText(
             requireContext(), getString(msgId), Toast.LENGTH_SHORT
         ).show()

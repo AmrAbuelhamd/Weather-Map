@@ -38,4 +38,6 @@
     <string name="east">E</string>
     <string name="south">S</string>
     <string name="global_weather">Global Weather</string>
+    <string name="share">share</string>
+    <string name="wanna_know">wanna know weather in %1$s</string>
 </resources>

@@ -20,7 +20,7 @@ class CityWeatherDetailsViewModel(
     private val _errorMessage: MutableLiveData<Int> = MutableLiveData(0)
     val errorMessage: LiveData<Int> = _errorMessage
 
-    private val _progressBarVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val _progressBarVisibility: MutableLiveData<Boolean> = MutableLiveData(true)
     val progressBarVisibility: LiveData<Boolean> = _progressBarVisibility
 
     private val _cityWeatherInfo: MutableLiveData<Weather> = MutableLiveData()
@@ -41,8 +41,10 @@ class CityWeatherDetailsViewModel(
         if (cityName.isNullOrBlank()) {
             _errorMessage.postValue(R.string.something_went_wrong)
         } else {
+            _progressBarVisibility.value = true
             viewModelScope.launch(Dispatchers.IO + handler) {
                 _cityWeatherInfo.postValue(getCityWeatherByName(cityName).toPresenter())
+                _progressBarVisibility.postValue(false)
             }
         }
     }

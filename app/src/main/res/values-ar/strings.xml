@@ -39,4 +39,6 @@
     <string name="east">غرب</string>
     <string name="south">جنوب</string>
     <string name="global_weather">الطقس العالمي</string>
+    <string name="share">مشاركة</string>
+    <string name="wanna_know"> %1$s عاوز تعرف الطقس في </string>
 </resources>

@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.blogspot.soyamr.weathermap.presentation.fragments.city_weather.CityWeatherDetailsViewModel" />
@@ -90,6 +92,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/weatherDescTextView" />
 
+        <ProgressBar
+            android:id="@+id/progress_circular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{viewModel.progressBarVisibility ? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/humidityTextView"
             android:layout_width="wrap_content"
@@ -98,9 +110,9 @@
             android:layout_marginTop="8dp"
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
+            app:humidity="@{viewModel.cityWeatherInfo.humidity}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview4"
-            app:humidity="@{viewModel.cityWeatherInfo.humidity}"
             tools:text="90%" />
 
         <TextView
@@ -148,11 +160,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
-            app:pressure="@{viewModel.cityWeatherInfo.pressure}"
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview6"
+            app:pressure="@{viewModel.cityWeatherInfo.pressure}"
             tools:text="456" />
 
         <ImageView
