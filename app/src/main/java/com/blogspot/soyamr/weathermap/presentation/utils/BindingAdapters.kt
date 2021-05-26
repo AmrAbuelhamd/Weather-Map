@@ -34,11 +34,8 @@ fun setWindSpeed(view: TextView, windSpeed: String?, windDirectionResourceId: In
 @BindingAdapter("app:humidity")
 fun setHumidity(view: TextView, humidity: String?) {
     if (!humidity.isNullOrBlank()) {
-        view.text = HtmlCompat.fromHtml(
-            view.context.getString(
-                R.string.humidity_percent,
-                humidity,
-            ), HtmlCompat.FROM_HTML_MODE_COMPACT
+        view.text = view.context.getString(
+            R.string.humidity_percent, humidity,
         )
     }
 }

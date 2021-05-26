@@ -38,27 +38,31 @@ class CityWeatherDetailsFragment : Fragment() {
             it.lifecycleOwner = this
             it.viewModel = viewModel
         }
-        binding.toolbar.setNavigationOnClickListener()
-        {
-            requireActivity().supportFragmentManager.commit {
-                replace<MapsFragment>(R.id.fragment_container_view)
-                setReorderingAllowed(true)
-            }
-        }
-        binding.toolbar.navigationIcon?.isAutoMirrored = true
-        binding.toolbar.setOnMenuItemClickListener {
-            if (it.itemId == R.id.share) {
-                viewModel.cityWeatherInfo.value?.cityName?.let {
-                    val sendIntent: Intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, getString(R.string.wanna_know, it))
-                        type = "text/plain"
-                    }
-                    val shareIntent = Intent.createChooser(sendIntent, null)
-                    startActivity(shareIntent)
+        binding.toolbar.apply {
+            setNavigationOnClickListener()
+            {
+                requireActivity().supportFragmentManager.commit {
+                    replace<MapsFragment>(R.id.fragment_container_view)
+                    setReorderingAllowed(true)
                 }
             }
-            true
+
+            navigationIcon?.isAutoMirrored = true
+
+            setOnMenuItemClickListener {
+                if (it.itemId == R.id.share) {
+                    viewModel.cityWeatherInfo.value?.cityName?.let {
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, getString(R.string.wanna_know, it))
+                            type = "text/plain"
+                        }
+                        val shareIntent = Intent.createChooser(sendIntent, null)
+                        startActivity(shareIntent)
+                    }
+                }
+                true
+            }
         }
 
         observeViewModelLiveData()

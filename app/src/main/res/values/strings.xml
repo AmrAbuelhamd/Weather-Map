@@ -16,7 +16,7 @@
     <string name="pressure">PRESSURE</string>
 
 
-    <string name="humidity_percent"><![CDATA[<b>%1$s%%</b>]]></string>
+    <string name="humidity_percent">%1$s%%</string>
     <string name="wind_speed"><![CDATA[<b>%1$s %2$s m/s</b>]]></string>
     <string name="pressure_unit"><![CDATA[<b>%1$s mm Hg</b>]]></string>
 
