@@ -5,9 +5,10 @@ import android.location.Geocoder
 import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.blogspot.soyamr.data.utils.NoInternetException
 import com.blogspot.soyamr.weathermap.R
-import com.blogspot.soyamr.weathermap.presentation.base.BaseViewModel
 import com.blogspot.soyamr.weathermap.presentation.utils.SingleLiveEvent
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.maps.model.LatLng
@@ -16,6 +17,7 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.*
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -23,7 +25,13 @@ import kotlinx.coroutines.launch
 class MapsViewModel(
     private val geocoder: Geocoder,
     private val placesClient: PlacesClient
-) : BaseViewModel() {
+) : ViewModel() {
+
+    private val _errorMessage: MutableLiveData<Int> = MutableLiveData(0)
+    val errorMessage: LiveData<Int> = _errorMessage
+
+    private val _progressBarVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
+    val progressBarVisibility: LiveData<Boolean> = _progressBarVisibility
 
     private val _cityInfoContainerVisibility: MutableLiveData<Boolean> = MutableLiveData(false)
     val cityInfoContainerVisibility: LiveData<Boolean> = _cityInfoContainerVisibility
@@ -41,6 +49,14 @@ class MapsViewModel(
     val currentLatLng: LiveData<LatLng> = _currentLatLng
 
     val showWeatherDetails: SingleLiveEvent<String> = SingleLiveEvent()
+
+    val handler = CoroutineExceptionHandler { _, exception ->
+        if (exception is NoInternetException)
+            _errorMessage.postValue(R.string.no_internet)
+        else
+            _errorMessage.postValue(R.string.something_went_wrong)
+        println(" : "+exception)
+    }
 
     private var querySearchJob: Job? = null
 
@@ -137,6 +153,10 @@ class MapsViewModel(
         })
     }
 
+    fun switchProgressBarVisibility(visibility: Boolean) {
+        _progressBarVisibility.value = visibility
+    }
+
     private fun setPlaceSuggestion(placeId: String) {
         // Construct a request object, passing the place ID and fields array.
         val requestObject = FetchPlaceRequest.newInstance(placeId, placeFields)
@@ -175,4 +195,5 @@ class MapsViewModel(
         formattedCoordinates += "\""
         return formattedCoordinates
     }
+
 }

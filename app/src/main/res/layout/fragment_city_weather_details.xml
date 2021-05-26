@@ -96,11 +96,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
-            android:text='@{String.format(@string/humidity_percent,viewModel.cityWeatherInfo.humidity)}'
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview4"
+            app:humidity="@{viewModel.cityWeatherInfo.humidity}"
             tools:text="90%" />
 
         <TextView
@@ -122,11 +122,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
-            android:text='@{viewModel.cityWeatherInfo.windSpeed}'
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textview5"
+            app:windDirection='@{viewModel.cityWeatherInfo.directionResourceId}'
+            app:windSpeed='@{viewModel.cityWeatherInfo.windSpeed}'
             tools:text="456" />
 
         <TextView
@@ -147,7 +148,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
-            android:text="@{viewModel.cityWeatherInfo.pressure}"
+            app:pressure="@{viewModel.cityWeatherInfo.pressure}"
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"

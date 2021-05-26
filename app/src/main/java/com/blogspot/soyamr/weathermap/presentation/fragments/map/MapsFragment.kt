@@ -8,8 +8,11 @@ import android.database.MatrixCursor
 import android.location.Location
 import android.os.Bundle
 import android.provider.BaseColumns
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,13 +21,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.fragment.app.setFragmentResult
 import com.blogspot.soyamr.weathermap.R
+import com.blogspot.soyamr.weathermap.databinding.FragmentCityWeatherDetailsBinding
 import com.blogspot.soyamr.weathermap.databinding.FragmentMapsBinding
-import com.blogspot.soyamr.weathermap.presentation.base.BaseFragment
 import com.blogspot.soyamr.weathermap.presentation.fragments.city_weather.CityWeatherDetailsFragment
+import com.blogspot.soyamr.weathermap.presentation.fragments.city_weather.CityWeatherDetailsViewModel
 import com.blogspot.soyamr.weathermap.presentation.fragments.map.helpers.LocationListener
 import com.blogspot.soyamr.weathermap.presentation.fragments.map.helpers.LocationManger
 import com.blogspot.soyamr.weathermap.presentation.utils.Utils.bitMapFromVector
@@ -37,11 +42,14 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.model.Place
-import org.koin.android.ext.android.get
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
-class MapsFragment : BaseFragment<MapsViewModel, FragmentMapsBinding>(R.layout.fragment_maps) {
+class MapsFragment : Fragment() {
 
+
+    private val viewModel: MapsViewModel by viewModel()
+    private lateinit var binding: FragmentMapsBinding
     private lateinit var googleMap: GoogleMap
 
     private val customPinIcon: BitmapDescriptor? by lazy {
@@ -149,10 +157,21 @@ class MapsFragment : BaseFragment<MapsViewModel, FragmentMapsBinding>(R.layout.f
         setHasOptionsMenu(true)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
-        setUpViewModelListeners()
         setUpSearchView()
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentMapsBinding.inflate(inflater, container, false).also {
+            it.lifecycleOwner = this
+            it.viewModel = viewModel
+        }
+        setUpViewModelListeners()
+        return binding.root
+    }
     private fun setUpSearchView() {
         searchView.findViewById<AutoCompleteTextView>(R.id.search_src_text).threshold = 1
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -186,6 +205,7 @@ class MapsFragment : BaseFragment<MapsViewModel, FragmentMapsBinding>(R.layout.f
         viewModel.showWeatherDetails.observe(viewLifecycleOwner, ::openCityWeatherFragment)
         viewModel.suggestions.observe(viewLifecycleOwner, ::showSuggestion)
         viewModel.currentLatLng.observe(viewLifecycleOwner, ::showLocationOnMap)
+        viewModel.errorMessage.observe(viewLifecycleOwner, ::showError)
     }
 
     private fun showSuggestion(suggestions: List<Place>?) {
@@ -214,11 +234,18 @@ class MapsFragment : BaseFragment<MapsViewModel, FragmentMapsBinding>(R.layout.f
         locationManger.stopLocationUpdates()
     }
 
-    override fun getViewModel() {
-        viewModel = get()
+    private fun showError(errorStringId: Int?) {
+        errorStringId?.let {
+            if (it != 0) {
+                showMessage(it, false)
+            }
+        }
     }
 
-    override fun setViewModelInBinding() {
-        binding.viewModel = viewModel
+    private fun showMessage(msgId: Int, showProgressBar: Boolean) {
+        viewModel.switchProgressBarVisibility(showProgressBar)
+        Toast.makeText(
+            requireContext(), getString(msgId), Toast.LENGTH_SHORT
+        ).show()
     }
 }

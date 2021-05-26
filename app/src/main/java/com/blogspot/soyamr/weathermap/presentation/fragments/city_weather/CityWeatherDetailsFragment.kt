@@ -1,21 +1,24 @@
 package com.blogspot.soyamr.weathermap.presentation.fragments.city_weather
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.fragment.app.setFragmentResultListener
 import com.blogspot.soyamr.weathermap.R
 import com.blogspot.soyamr.weathermap.databinding.FragmentCityWeatherDetailsBinding
-import com.blogspot.soyamr.weathermap.presentation.base.BaseFragment
 import com.blogspot.soyamr.weathermap.presentation.fragments.map.MapsFragment
-import org.koin.android.ext.android.get
+import org.koin.android.viewmodel.ext.android.viewModel
 
 
-class CityWeatherDetailsFragment :
-    BaseFragment<CityWeatherDetailsViewModel, FragmentCityWeatherDetailsBinding>(
-        R.layout.fragment_city_weather_details
-    ) {
+class CityWeatherDetailsFragment : Fragment() {
+
+    private val viewModel: CityWeatherDetailsViewModel by viewModel()
+    private lateinit var binding: FragmentCityWeatherDetailsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +28,16 @@ class CityWeatherDetailsFragment :
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentCityWeatherDetailsBinding.inflate(inflater, container, false).also {
+            it.lifecycleOwner = this
+            it.viewModel = viewModel
+        }
+
         binding.toolbar.setNavigationOnClickListener()
         {
             requireActivity().supportFragmentManager.commit {
@@ -34,15 +45,28 @@ class CityWeatherDetailsFragment :
                 setReorderingAllowed(true)
             }
         }
+        observeViewModelLiveData()
+
+        return binding.root
     }
 
-    override fun getViewModel() {
-        viewModel = get()
+    private fun observeViewModelLiveData() {
+        viewModel.errorMessage.observe(viewLifecycleOwner, ::showError)
     }
 
-    override fun setViewModelInBinding() {
-        binding.viewModel = viewModel
-//        getString(R.string.humidity_percent,0)
+    private fun showError(errorStringId: Int?) {
+        errorStringId?.let {
+            if (it != 0) {
+                showMessage(it, false)
+            }
+        }
+    }
+
+    private fun showMessage(msgId: Int, showProgressBar: Boolean) {
+        viewModel.switchProgressBarVisibility(showProgressBar)
+        Toast.makeText(
+            requireContext(), getString(msgId), Toast.LENGTH_SHORT
+        ).show()
     }
 
     companion object {
