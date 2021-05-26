@@ -16,7 +16,7 @@ data class Main(
     val pressure: Int?,
     val humidity: Int?,
     @SerialName("sea_level")
-    val seaLevel: Int?,
+    val seaLevel: Int? = 0,
     @SerialName("grnd_level")
-    val grndLevel: Int?
+    val grndLevel: Int? = 0
 )

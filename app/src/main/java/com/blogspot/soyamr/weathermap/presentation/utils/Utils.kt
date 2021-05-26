@@ -29,4 +29,9 @@ object Utils {
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
+
+    fun getUrl(value: String): String = "https://openweathermap.org/img/wn/$value@2x.png"
+
+
+    fun convertTOmmHg(hPa: Double) = hPa / 1.33322387415
 }

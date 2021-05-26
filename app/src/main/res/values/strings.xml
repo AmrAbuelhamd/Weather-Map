@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Weather Map</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_internet">Sorry you are not connected to internet:)</string>
     <string name="can_not_find_location">we can\'t get your location on the map</string>
     <string name="getting_your_location">getting your current location wait..</string>
@@ -11,4 +9,35 @@
     <string name="no_city_found">no city found in this location</string>
     <string name="choose_city">choose city</string>
     <string name="search_places">Search Places</string>
+    <string name="city_name">City Name</string>
+    <string name="c">°C</string>
+    <string name="humidity">HUMIDITY</string>
+    <string name="wind">WIND</string>
+    <string name="pressure">PRESSURE</string>
+
+
+    <string name="humidity_percent">%1$s%%</string>
+    <string name="wind_speed">%1$s %2$s m/s</string>
+    <string name="pressure_unit">%1$s mm Hg</string>
+
+
+    <string name="broken_clouds">Broken Clouds</string>
+    <string name="clear_sky">Clear Sky</string>
+    <string name="few_clouds">Few Clouds</string>
+    <string name="mist">Mist</string>
+    <string name="rain">Rain</string>
+    <string name="scattered_clouds">Scattered Clouds</string>
+    <string name="shower_rain">ShowerRain</string>
+    <string name="snow">Snow</string>
+    <string name="thunderstorm">Thunderstorm</string>
+    <string name="place_holder">desc placeholder</string>
+    <string name="weather_description">weather description</string>
+    <string name="weather_icon_description">weather icon description</string>
+    <string name="north">N</string>
+    <string name="west">W</string>
+    <string name="east">E</string>
+    <string name="south">S</string>
+    <string name="global_weather">Global Weather</string>
+    <string name="share">share</string>
+    <string name="wanna_know">wanna know weather in %1$s</string>
 </resources>

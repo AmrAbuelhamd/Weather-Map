@@ -4,7 +4,6 @@ import com.blogspot.soyamr.data.utils.NoInternetException
 import com.blogspot.soyamr.domain.utils.Connectivity
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.io.IOException
 
 class InternetExceptionInterceptor(
     private val connectivity: Connectivity

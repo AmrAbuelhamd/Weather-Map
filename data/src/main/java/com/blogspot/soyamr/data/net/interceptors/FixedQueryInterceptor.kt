@@ -13,7 +13,7 @@ class FixedQueryInterceptor(private val apiKey: String) : Interceptor {
                 url.newBuilder()
                     .addQueryParameter(
                         "units",
-                        "metrics"
+                        "metric"
                     ).addQueryParameter(
                         "appid",
                         apiKey

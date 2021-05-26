@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.blogspot.soyamr.weathermap.presentation.map.MapsViewModel" />
+            type="com.blogspot.soyamr.weathermap.presentation.fragments.map.MapsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -25,7 +25,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:menu="@menu/menu_maps"
-            app:title="Global Weather"
+            app:title="@string/global_weather"
             app:titleTextAppearance="@style/Toolbar.TitleText"
             app:titleTextColor="@color/black" />
 
@@ -38,7 +38,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            tools:context=".presentation.map.MapsFragment" />
+            tools:context=".presentation.fragments.map.MapsFragment" />
 
         <ProgressBar
             android:id="@+id/progress_circular"
@@ -99,10 +99,12 @@
                 android:id="@+id/locationTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginStart="16dp"
                 android:text="@{viewModel.locationFormattedString}"
                 android:textColor="@color/greyWhite"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cityNameTextView" />
 

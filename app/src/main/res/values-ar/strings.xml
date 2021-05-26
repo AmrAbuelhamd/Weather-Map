@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">خريطة الطقس</string>
+    <string name="no_internet">لا يوجد انترنت</string>
+    <string name="can_not_find_location">لا نستطيع تحديد موقعك علي الحريطة</string>
+    <string name="getting_your_location">يتم تحديد موقعك..</string>
+    <string name="something_went_wrong">حدث خطأ ما</string>
+    <string name="show_weather">اظهر معلومات الطقس</string>
+    <string name="googleServiceNotFound">لا يمكن تحديد اسم المدينة، خدمات جوجل غير موجودة علي الجهاز</string>
+    <string name="no_city_found">لا يوجد مدينة في هذا المكان</string>
+    <string name="choose_city">اختر مدينة!</string>
+    <string name="search_places">ابحث عن مكان!</string>
+    <string name="city_name">اسم المدينة</string>
+    <string name="c">°C</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="wind">الرياح</string>
+    <string name="pressure">الضغط</string>
+
+
+    <string name="humidity_percent">%%%1$s</string>
+    <string name="wind_speed"> %1$s %2$s م/ثانية</string>
+    <string name="pressure_unit">%1$s ملم زئبق</string>
+
+
+    <string name="broken_clouds">سحب متقطعة</string>
+    <string name="clear_sky">سماء صافية</string>
+    <string name="few_clouds">القليل من السحب</string>
+    <string name="mist">ميست</string>
+    <string name="rain">مطر</string>
+    <string name="scattered_clouds">سكاتترد سحب</string>
+    <string name="shower_rain">هتستحمي مطر</string>
+    <string name="snow">ثلج</string>
+    <string name="thunderstorm">رعد</string>
+    <string name="place_holder">بلاسهولدر</string>
+    <string name="weather_description">وصف الطقس</string>
+    <string name="weather_icon_description">ايكونه</string>
+    <string name="north">شمال</string>
+    <string name="west">شرق</string>
+    <string name="east">غرب</string>
+    <string name="south">جنوب</string>
+    <string name="global_weather">الطقس العالمي</string>
+    <string name="share">مشاركة</string>
+    <string name="wanna_know"> %1$s عاوز تعرف الطقس في </string>
+</resources>
