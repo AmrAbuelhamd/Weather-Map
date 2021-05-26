@@ -13,9 +13,15 @@
     <string name="search_places">Search Places</string>
     <string name="city_name">City Name</string>
     <string name="c">°C</string>
-    <string name="humidity">humidity</string>
-    <string name="wind_speed">wind speed</string>
-    <string name="pressure">pressure</string>
+    <string name="humidity">HUMIDITY</string>
+    <string name="wind">WIND</string>
+    <string name="pressure">PRESSURE</string>
+
+
+    <string name="humidity_percent">%1$s%%</string>
+    <string name="wind_speed">%1$s% %2$d% m/s</string>
+    <string name="pressure_unit">%1$d% mm Hg</string>
+
 
     <string name="broken_clouds">Broken Clouds</string>
     <string name="clear_sky">Clear Sky</string>
@@ -29,4 +35,8 @@
     <string name="place_holder">desc placeholder</string>
     <string name="weather_description">weather description</string>
     <string name="weather_icon_description">weather icon description</string>
+    <string name="north">N</string>
+    <string name="west">W</string>
+    <string name="east">E</string>
+    <string name="south">S</string>
 </resources>

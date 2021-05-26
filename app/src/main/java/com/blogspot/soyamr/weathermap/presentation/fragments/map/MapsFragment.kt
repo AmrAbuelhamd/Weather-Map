@@ -68,7 +68,7 @@ class MapsFragment : BaseFragment<MapsViewModel, FragmentMapsBinding>(R.layout.f
             viewModel.switchProgressBarVisibility(false)
             val userLocationLatLng = LatLng(userLocation.latitude, userLocation.longitude)
             googleMap.addMarker(MarkerOptions().position(userLocationLatLng))
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocationLatLng,15F))
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocationLatLng, 15F))
         }
 
         override fun hasLocationPermission() =
@@ -202,10 +202,10 @@ class MapsFragment : BaseFragment<MapsViewModel, FragmentMapsBinding>(R.layout.f
                 CityWeatherDetailsFragment.CITY_REQUEST_KEY,
                 bundleOf(CityWeatherDetailsFragment.CITY_NAME_BUNDLE_KEY to it)
             )
-            requireActivity().supportFragmentManager.commit {
-                replace<CityWeatherDetailsFragment>(R.id.fragment_container_view)
-                setReorderingAllowed(true)
-            }
+        }
+        requireActivity().supportFragmentManager.commit {
+            replace<CityWeatherDetailsFragment>(R.id.fragment_container_view)
+            setReorderingAllowed(true)
         }
     }
 
@@ -214,8 +214,11 @@ class MapsFragment : BaseFragment<MapsViewModel, FragmentMapsBinding>(R.layout.f
         locationManger.stopLocationUpdates()
     }
 
-    override fun setViewModel() {
+    override fun getViewModel() {
         viewModel = get()
+    }
+
+    override fun setViewModelInBinding() {
         binding.viewModel = viewModel
     }
 }

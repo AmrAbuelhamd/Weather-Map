@@ -18,6 +18,10 @@ abstract class BaseFragment<T : BaseViewModel, DB : ViewDataBinding>(
 
     lateinit var binding: DB
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        getViewModel()
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -26,12 +30,13 @@ abstract class BaseFragment<T : BaseViewModel, DB : ViewDataBinding>(
         return DataBindingUtil.inflate<DB>(inflater, layoutResId, container, false).also {
             binding = it
             it.lifecycleOwner = this
-            setViewModel()
+            setViewModelInBinding()
             viewModel.errorMessage.observe(viewLifecycleOwner, ::showError)
         }.root
     }
 
-    abstract fun setViewModel()
+    abstract fun getViewModel()
+    abstract fun setViewModelInBinding()
 
     private fun showError(errorStringId: Int?) {
         errorStringId?.let {

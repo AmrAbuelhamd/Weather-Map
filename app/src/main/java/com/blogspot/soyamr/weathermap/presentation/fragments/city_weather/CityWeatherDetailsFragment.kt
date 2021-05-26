@@ -36,9 +36,13 @@ class CityWeatherDetailsFragment :
         }
     }
 
-    override fun setViewModel() {
+    override fun getViewModel() {
         viewModel = get()
+    }
+
+    override fun setViewModelInBinding() {
         binding.viewModel = viewModel
+//        getString(R.string.humidity_percent,0)
     }
 
     companion object {

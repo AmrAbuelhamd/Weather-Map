@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.blogspot.soyamr.weathermap.presentation.fragments.city_weather.CityWeatherDetailsViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -89,7 +96,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="8dp"
-            android:text='@{viewModel.cityWeatherInfo.humidity + "%"}'
+            android:text='@{String.format(@string/humidity_percent,viewModel.cityWeatherInfo.humidity)}'
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -102,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="40dp"
-            android:text="@string/wind_speed"
+            android:text="@string/wind"
             android:textColor="@color/weather_desc"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -164,11 +171,4 @@
             tools:src="@drawable/clear_sky" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <data>
-
-        <variable
-            name="viewModel"
-            type="com.blogspot.soyamr.weathermap.presentation.fragments.city_weather.CityWeatherDetailsViewModel" />
-    </data>
 </layout>
