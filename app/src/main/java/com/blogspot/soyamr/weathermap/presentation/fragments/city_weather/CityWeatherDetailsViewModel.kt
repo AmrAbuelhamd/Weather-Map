@@ -31,7 +31,6 @@ class CityWeatherDetailsViewModel(
             _errorMessage.postValue(R.string.no_internet)
         else
             _errorMessage.postValue(R.string.something_went_wrong)
-        println(" : " + exception)
     }
 
     fun switchProgressBarVisibility(visibility: Boolean) {

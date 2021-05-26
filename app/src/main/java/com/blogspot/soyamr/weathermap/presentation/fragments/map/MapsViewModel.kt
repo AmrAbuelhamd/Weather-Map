@@ -74,6 +74,8 @@ class MapsViewModel(
                         _errorMessage.postValue(R.string.no_city_found)
                         return@launch
                     }
+                    if(addresses[0].locality.toString().isBlank())
+                        return@launch
                     _cityInfoContainerVisibility.postValue(true)
                     _cityName.postValue(addresses[0].locality)
                     _locationFormattedString.postValue(
